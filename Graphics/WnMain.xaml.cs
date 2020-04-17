@@ -37,13 +37,18 @@ namespace Chatterbox.Graphics
 
         private void OpenAbout(object sender, RoutedEventArgs e)
         {
-            new WnAbout().Show();
+            new WnAbout().ShowDialog();
+        }
+
+        private void OpenSettings(object sender, RoutedEventArgs e)
+        {
+            new WnSettings().ShowDialog();
         }
 
         private void Host(object sender, RoutedEventArgs e)
         {
-            _communicator.Host(8000);
-            WriteToChat("Started hosting at port 8000", false);
+            _communicator.Host(App.Settings.HostingPort);
+            WriteToChat($"Started hosting at port {App.Settings.HostingPort}", false);
         }
 
         private void Connect(object sender, RoutedEventArgs e)

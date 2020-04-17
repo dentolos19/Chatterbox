@@ -11,7 +11,9 @@ namespace Chatterbox.Core
         private static readonly string Source = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Chatterbox.cfg");
         private static readonly XmlSerializer Serializer = new XmlSerializer(typeof(Configuration));
 
-        public string Username = Environment.UserName;
+        public int HostingPort { get; set; } = 8000;
+
+        public string Username { get; set; } = Environment.UserName;
 
         public void Save()
         {
