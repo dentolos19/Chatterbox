@@ -12,6 +12,8 @@ namespace Chatterbox.Core
 
         private static readonly XmlSerializer Serializer = new XmlSerializer(typeof(Relay));
 
+        internal bool IsEnding { get; set; }
+
         public string Name { get; set; }
 
         public string Message { get; set; }

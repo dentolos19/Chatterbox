@@ -14,8 +14,9 @@ namespace Chatterbox.Core
         private StreamWriter _writer;
         private TcpClient _client;
         private TcpListener _listener;
-
         private Relay _toBeSent;
+
+        private bool _imHost;
 
         public Relay Recieved { get; private set; }
 
@@ -41,9 +42,21 @@ namespace Chatterbox.Core
         {
             while (_client.Connected)
             {
-                var data = _reader.ReadLine();
-                Recieved = Relay.Parse(data);
-                OnRecieved?.Invoke(this, new EventArgs());
+                try
+                {
+                    var data = _reader.ReadLine();
+                    Recieved = Relay.Parse(data);
+                    if (Recieved.IsEnding)
+                    {
+                        Stop();
+                        return;
+                    }
+                    OnRecieved?.Invoke(this, new EventArgs());
+                }
+                catch
+                {
+                    Stop();
+                }
             }
         }
 
@@ -54,6 +67,7 @@ namespace Chatterbox.Core
             _writer = new StreamWriter(_client.GetStream());
             _reader = new StreamReader(_client.GetStream());
             _writer.AutoFlush = true;
+            _imHost = false;
             _reciever.RunWorkerAsync();
         }
 
@@ -65,7 +79,24 @@ namespace Chatterbox.Core
             _writer = new StreamWriter(_client.GetStream());
             _reader = new StreamReader(_client.GetStream());
             _writer.AutoFlush = true;
+            _imHost = true;
             _reciever.RunWorkerAsync();
+        }
+
+        public void Stop()
+        {
+            Send(new Relay
+            {
+                IsEnding = true
+            });
+            if (_imHost)
+            {
+                _listener.Stop();
+            }
+            _writer.Close();
+            _reader.Close();
+            _client.GetStream().Close();
+            _client.Close();
         }
 
         public void Send(Relay data)

@@ -9,6 +9,7 @@ namespace Chatterbox.Graphics
     public partial class WnMain
     {
 
+        private bool _isRunning;
         private readonly Communicator _communicator = new Communicator();
 
         public WnMain()
@@ -17,12 +18,9 @@ namespace Chatterbox.Graphics
             InitializeComponent();
         }
 
-        private void WriteToChat(string message, bool newLine = true)
+        private void WriteToChat(string message)
         {
-            if (newLine)
-                BxChat.Text += $"\n{message}";
-            else
-                BxChat.Text += message;
+            BxChat.Text += message;
         }
 
         private void Recieved(object sender, EventArgs e)
@@ -47,14 +45,62 @@ namespace Chatterbox.Graphics
 
         private void Host(object sender, RoutedEventArgs e)
         {
-            _communicator.Host(App.Settings.HostingPort);
-            WriteToChat($"Started hosting at port {App.Settings.HostingPort}", false);
+            try
+            {
+                if (_isRunning)
+                {
+                    _communicator.Stop();
+                    BnConnect.IsEnabled = true;
+                    BnSend.IsEnabled = false;
+                    BnHost.Content = "Host";
+                    _isRunning = false;
+                    return;
+                }
+                _communicator.Host(App.Settings.HostingPort);
+                WriteToChat($"Started hosting at port {App.Settings.HostingPort}");
+                BnConnect.IsEnabled = false;
+                BnSend.IsEnabled = true;
+                BnHost.Content = "Stop";
+                _isRunning = true;
+            }
+            catch
+            {
+                BnConnect.IsEnabled = true;
+                BnSend.IsEnabled = false;
+                BnHost.Content = "Host";
+                _isRunning = false;
+                MessageBox.Show("Unable to start/stop hosting!", "Chatterbox");
+            }
         }
 
         private void Connect(object sender, RoutedEventArgs e)
         {
-            _communicator.Connect(new IPEndPoint(IPAddress.Loopback, 8000));
-            WriteToChat("Connected to host server 127.0.0.1:8000", false);
+            try
+            {
+                if (_isRunning)
+                {
+                    _communicator.Stop();
+                    BnHost.IsEnabled = true;
+                    BnSend.IsEnabled = false;
+                    BnConnect.Content = "Connect";
+                    _isRunning = false;
+                    return;
+                }
+                _communicator.Connect(new IPEndPoint(IPAddress.Loopback, 8000));
+                WriteToChat("Connected to host server 127.0.0.1:8000");
+                BnHost.IsEnabled = false;
+                BnSend.IsEnabled = true;
+                BnConnect.Content = "Disconnect";
+                _isRunning = true;
+            }
+            catch
+            {
+                BnHost.IsEnabled = true;
+                BnSend.IsEnabled = false;
+                BnConnect.Content = "Connect";
+                _isRunning = false;
+                MessageBox.Show("Unable to dis/connect to host server!", "Chatterbox");
+            }
         }
 
         private void Send(object sender, RoutedEventArgs e)

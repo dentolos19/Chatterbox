@@ -14,10 +14,10 @@
         </DockPanel>
         <DockPanel>
             <DockPanel DockPanel.Dock="Bottom" Height="30">
-                <Button x:Name="BnSend" DockPanel.Dock="Right" Width="50" Content="Send" IsDefault="True" Click="Send"/>
+                <Button x:Name="BnSend" DockPanel.Dock="Right" Width="50" Content="Send" IsDefault="True" Click="Send" IsEnabled="False"/>
                 <TextBox x:Name="BxSend" VerticalContentAlignment="Center"/>
             </DockPanel>
-            <TextBox x:Name="BxChat" IsReadOnly="True"/>
+            <TextBox x:Name="BxChat" Text="Created By Dennise // Copyright (c) 2020" IsReadOnly="True"/>
         </DockPanel>
     </DockPanel>
 </Window>
