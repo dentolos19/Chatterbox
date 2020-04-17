@@ -1,9 +1,10 @@
-﻿<Window x:Class="Chatterbox.Graphics.WnMain"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Chatterbox">
+﻿<mahApps:MetroWindow x:Class="Chatterbox.Graphics.WnMain"
+                     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                     xmlns:mahApps="http://metro.mahapps.com/winfx/xaml/controls"
+                     Title="Chatterbox" Closing="CheckIfRunning">
     <DockPanel>
-        <DockPanel DockPanel.Dock="Top" Height="50" Background="WhiteSmoke">
+        <DockPanel x:Name="Panel" DockPanel.Dock="Top" Height="50" Background="WhiteSmoke">
             <Image Source="/Resources/Icon.ico" Width="30" Margin="10,10,0,10"/>
             <Button DockPanel.Dock="Right" Width="75" Margin="0,10,10,10" Content="Exit" Click="Exit"/>
             <Button DockPanel.Dock="Right" Width="75" Margin="0,10,10,10" Content="About" Click="OpenAbout"/>
@@ -17,7 +18,7 @@
                 <Button x:Name="BnSend" DockPanel.Dock="Right" Width="50" Content="Send" IsDefault="True" Click="Send" IsEnabled="False"/>
                 <TextBox x:Name="BxSend" VerticalContentAlignment="Center"/>
             </DockPanel>
-            <TextBox x:Name="BxChat" Text="Created By Dennise // Copyright (c) 2020" IsReadOnly="True"/>
+            <TextBox x:Name="BxChat" Text="Created By Dennise // Copyright © 2020" IsReadOnly="True"/>
         </DockPanel>
     </DockPanel>
-</Window>
+</mahApps:MetroWindow>

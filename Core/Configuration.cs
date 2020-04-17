@@ -15,6 +15,10 @@ namespace Chatterbox.Core
 
         public string Username { get; set; } = Environment.UserName;
 
+        public string AppTheme { get; set; } = "Light";
+
+        public string AppAccent { get; set; } = "Orange";
+
         public void Save()
         {
             using var stream = new FileStream(Source, FileMode.Create);

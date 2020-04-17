@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 using Chatterbox.Core;
 using Chatterbox.Graphics;
 
@@ -12,6 +13,10 @@ namespace Chatterbox
 
         private void Initialize(object sender, StartupEventArgs e)
         {
+            Current.Resources.MergedDictionaries.Add(new ResourceDictionary
+            {
+                Source = new Uri($"pack://application:,,,/MahApps.Metro;component/Styles/Themes/{Settings.AppTheme}.{Settings.AppAccent}.xaml")
+            });
             new WnMain().Show();
         }
 

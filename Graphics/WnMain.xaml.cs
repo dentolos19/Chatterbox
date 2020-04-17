@@ -1,7 +1,10 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Net;
 using System.Windows;
+using System.Windows.Media;
 using Chatterbox.Core;
+using MahApps.Metro.Controls.Dialogs;
 
 namespace Chatterbox.Graphics
 {
@@ -16,11 +19,13 @@ namespace Chatterbox.Graphics
         {
             _communicator.OnRecieved += Recieved;
             InitializeComponent();
+            if (App.Settings.AppTheme == "Dark")
+                Panel.Background = new BrushConverter().ConvertFrom("#FF444444") as Brush;
         }
 
         private void WriteToChat(string message)
         {
-            BxChat.Text += message;
+            BxChat.Text += $"\n{message}";
         }
 
         private void Recieved(object sender, EventArgs e)
@@ -43,10 +48,15 @@ namespace Chatterbox.Graphics
             new WnSettings().ShowDialog();
         }
 
-        private void Host(object sender, RoutedEventArgs e)
+        private async void Host(object sender, RoutedEventArgs e)
         {
             try
             {
+                if (!Utilities.IsUserOnline())
+                {
+                    await this.ShowMessageAsync("I need something!", "An internet connection is required for this work!");
+                    return;
+                }
                 if (_isRunning)
                 {
                     _communicator.Stop();
@@ -57,7 +67,7 @@ namespace Chatterbox.Graphics
                     return;
                 }
                 _communicator.Host(App.Settings.HostingPort);
-                WriteToChat($"Started hosting at port {App.Settings.HostingPort}");
+                WriteToChat($"Started hosting at port {Utilities.GetPublicIp()}:{App.Settings.HostingPort}");
                 BnConnect.IsEnabled = false;
                 BnSend.IsEnabled = true;
                 BnHost.Content = "Stop";
@@ -68,15 +78,21 @@ namespace Chatterbox.Graphics
                 BnConnect.IsEnabled = true;
                 BnSend.IsEnabled = false;
                 BnHost.Content = "Host";
+                if (!_isRunning)
+                    WriteToChat("Unable to start hosting");
                 _isRunning = false;
-                MessageBox.Show("Unable to start/stop hosting!", "Chatterbox");
             }
         }
 
-        private void Connect(object sender, RoutedEventArgs e)
+        private async void Connect(object sender, RoutedEventArgs e)
         {
             try
             {
+                if (!Utilities.IsUserOnline())
+                {
+                    await this.ShowMessageAsync("I need something!", "An internet connection is required for this work!");
+                    return;
+                }
                 if (_isRunning)
                 {
                     _communicator.Stop();
@@ -86,8 +102,13 @@ namespace Chatterbox.Graphics
                     _isRunning = false;
                     return;
                 }
-                _communicator.Connect(new IPEndPoint(IPAddress.Loopback, 8000));
-                WriteToChat("Connected to host server 127.0.0.1:8000");
+                var raw = await this.ShowInputAsync("Your input is required!", "Enter the IP address to connect to.", new MetroDialogSettings
+                {
+                    DefaultText = "127.0.0.1:8000"
+                });
+                var address = raw.Split(":");
+                _communicator.Connect(new IPEndPoint(IPAddress.Parse(address[0]), int.Parse(address[1])));
+                WriteToChat($"Connected to host server {raw}");
                 BnHost.IsEnabled = false;
                 BnSend.IsEnabled = true;
                 BnConnect.Content = "Disconnect";
@@ -98,8 +119,9 @@ namespace Chatterbox.Graphics
                 BnHost.IsEnabled = true;
                 BnSend.IsEnabled = false;
                 BnConnect.Content = "Connect";
+                if (!_isRunning)
+                    WriteToChat("Unable to connect to host server");
                 _isRunning = false;
-                MessageBox.Show("Unable to dis/connect to host server!", "Chatterbox");
             }
         }
 
@@ -113,6 +135,14 @@ namespace Chatterbox.Graphics
             _communicator.Send(data);
             WriteToChat($"[{data.Time.ToShortTimeString()}] {data.Name}: {data.Message}");
             BxSend.Text = string.Empty;
+        }
+
+        private async void CheckIfRunning(object sender, CancelEventArgs e)
+        {
+            if (!_isRunning)
+                return;
+            await this.ShowMessageAsync("Don't keep me running!", "Stop or disconnect before closing this app!");
+            e.Cancel = true;
         }
 
     }
