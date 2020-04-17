@@ -4,21 +4,19 @@
         Title="Chatterbox">
     <DockPanel>
         <DockPanel DockPanel.Dock="Top" Height="50" Background="WhiteSmoke">
-            <Image Width="30" Margin="10,10,0,10" Source="/Resources/Icon.ico"/>
-            <Button DockPanel.Dock="Right" Content="Exit" Width="75" Margin="0,10,10,10" Click="Exit"/>
-            <Button DockPanel.Dock="Right" Content="About" Width="75" Margin="0,10,10,10" Click="OpenAbout"/>
-            <Button DockPanel.Dock="Right" Content="Settings" Width="75" Margin="0,10,10,10" Click="OpenSettings"/>
-            <Button x:Name="BtnHost" DockPanel.Dock="Right" Content="Host" Width="75" Margin="0,10,10,10" Click="Host"/>
-            <Button x:Name="BtnConnect" DockPanel.Dock="Right" Content="Connect" Width="75" Margin="0,10,10,10" Click="Connect"/>
-            <TextBox x:Name="AddressBox" DockPanel.Dock="Right" Text="127.0.0.1:8000" Width="100" Margin="0,10,10,10" VerticalContentAlignment="Center"/>
-            <Label Content="Chatterbox" VerticalContentAlignment="Center" FontSize="16"/>
+            <Image Source="/Resources/Icon.ico" Width="30" Margin="10,10,0,10"/>
+            <Button DockPanel.Dock="Right" Width="75" Margin="0,10,10,10" Content="Exit" Click="Exit"/>
+            <Button DockPanel.Dock="Right" Width="75" Margin="0,10,10,10" Content="About" Click="OpenAbout"/>
+            <Button x:Name="BnHost" DockPanel.Dock="Right" Width="75" Margin="0,10,10,10" Content="Host" Click="Host"/>
+            <Button x:Name="BnConnect" DockPanel.Dock="Right" Width="75" Margin="0,10,10,10" Content="Connect" Click="Connect"/>
+            <Label Content="Chatterbox" Margin="10,10,10,10" VerticalContentAlignment="Center" FontSize="16"/>
         </DockPanel>
         <DockPanel>
-            <DockPanel Dock="Bottom">
-                <Button x:Name="BtnSend" DockPanel.Dock="Right" Content="Send" Width="50" IsDefault="True" Click="Send" IsEnabled="False"/>
-                <TextBox x:Name="SendBox" Height="30" VerticalContentAlignment="Center"/>
+            <DockPanel DockPanel.Dock="Bottom" Height="30">
+                <Button x:Name="BnSend" DockPanel.Dock="Right" Width="50" Content="Send" IsDefault="True" Click="Send"/>
+                <TextBox x:Name="BxSend" VerticalContentAlignment="Center"/>
             </DockPanel>
-            <TextBox x:Name="Chat" IsReadOnly="True"/>
+            <TextBox x:Name="BxChat" IsReadOnly="True"/>
         </DockPanel>
     </DockPanel>
 </Window>

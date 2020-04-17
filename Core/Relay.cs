@@ -1,18 +1,22 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
 
-namespace Chatterbox.Core.Models
+namespace Chatterbox.Core
 {
 
-    public class CbData
+    public class Relay
     {
 
-        private static readonly XmlSerializer Serializer = new XmlSerializer(typeof(CbData));
+        private static readonly XmlSerializer Serializer = new XmlSerializer(typeof(Relay));
 
         public string Name { get; set; }
+
         public string Message { get; set; }
+
+        public DateTime Time { get; } = DateTime.Now;
 
         public override string ToString()
         {
@@ -27,11 +31,11 @@ namespace Chatterbox.Core.Models
             return strWriter.ToString();
         }
 
-        public static CbData Parse(string data)
+        public static Relay Parse(string data)
         {
             var buffer = Encoding.Unicode.GetBytes(data);
             using var stream = new MemoryStream(buffer);
-            return Serializer.Deserialize(stream) as CbData;
+            return Serializer.Deserialize(stream) as Relay;
         }
 
     }
