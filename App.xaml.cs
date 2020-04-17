@@ -24,7 +24,7 @@ namespace Chatterbox
             var result = MessageBox.Show($"An error has occurred! {e.Exception.Message} Do you want to continue using this program?", "Chatterbox", MessageBoxButton.YesNo);
             if (result == MessageBoxResult.Yes)
             {
-                _windowMain.Close();
+                _windowMain.Hide();
                 _windowMain = new WnMain();
                 _windowMain.Show();
                 e.Handled = true;

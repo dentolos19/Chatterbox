@@ -4,6 +4,7 @@ using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Windows;
+using Chatterbox.Core.Models;
 
 namespace Chatterbox.Graphics
 {
@@ -32,16 +33,30 @@ namespace Chatterbox.Graphics
         {
             while (_client.Connected)
             {
-                var recieve = _reader.ReadLine();
-                Dispatcher.BeginInvoke(new Action(() => { Chat.Text += $"\n{recieve}"; }));
+                var data = _reader.ReadLine();
+                var parsed = CbData.Parse(data);
+                Dispatcher.BeginInvoke(new Action(() => { WriteToChat($"{parsed.Name}: {parsed.Message}"); }));
             }
         }
 
         private void SendMessage(object sender, DoWorkEventArgs e)
         {
-            _writer.WriteLine($"{App.Settings.Username}: {_toBeSent}");
-            Dispatcher.BeginInvoke(new Action(() => { Chat.Text += $"\nYou: {_toBeSent}"; }));
+            var data = new CbData
+            {
+                Name = App.Settings.Username,
+                Message = _toBeSent
+            }.ToString();
+            _writer.WriteLine(data);
+            Dispatcher.BeginInvoke(new Action(() => { WriteToChat($"\nYou: {_toBeSent}"); }));
             _sender.CancelAsync();
+        }
+
+        private void WriteToChat(string message)
+        {
+            if (Chat.Text == string.Empty)
+                Chat.Text = message;
+            else
+                Chat.Text += $"\n{message.Replace("\n", string.Empty)}";
         }
 
         private void Exit(object sender, RoutedEventArgs e)
@@ -61,9 +76,7 @@ namespace Chatterbox.Graphics
 
         private void Host(object sender, RoutedEventArgs e)
         {
-            BtnConnect.IsEnabled = false;
-            BtnHost.IsEnabled = false;
-            AddressBox.IsEnabled = false;
+            
             var listener = new TcpListener(IPAddress.Any, 8000);
             listener.Start();
             _client = listener.AcceptTcpClient();
@@ -71,36 +84,28 @@ namespace Chatterbox.Graphics
             _reader = new StreamReader(_client.GetStream());
             _writer.AutoFlush = true;
             _reciever.RunWorkerAsync();
-            Chat.Text = "Started hosting at port 8000.";
+            WriteToChat("Started hosting at port 8000.");
+            BtnConnect.IsEnabled = false;
+            BtnHost.IsEnabled = false;
+            AddressBox.IsEnabled = false;
             BtnSend.IsEnabled = true;
         }
 
         private void Connect(object sender, RoutedEventArgs e)
         {
-            BtnConnect.IsEnabled = false;
-            BtnHost.IsEnabled = false;
-            AddressBox.IsEnabled = false;
             var address = AddressBox.Text.Split(":");
             _client = new TcpClient();
             var endpoint = new IPEndPoint(IPAddress.Parse(address[0]), int.Parse(address[1]));
             _client.Connect(endpoint);
-            if (_client.Connected)
-            {
-                _writer = new StreamWriter(_client.GetStream());
-                _reader = new StreamReader(_client.GetStream());
-                _writer.AutoFlush = true;
-                _reciever.RunWorkerAsync();
-                Chat.Text = $"Connected to host server {AddressBox.Text}";
-                BtnSend.IsEnabled = true;
-            }
-            else
-            {
-                BtnConnect.IsEnabled = true;
-                BtnHost.IsEnabled = true;
-                AddressBox.IsEnabled = true;
-                BtnSend.IsEnabled = false;
-                MessageBox.Show("Unable to connect to host server!", "Chatterbox");
-            }
+            _writer = new StreamWriter(_client.GetStream());
+            _reader = new StreamReader(_client.GetStream());
+            _writer.AutoFlush = true;
+            _reciever.RunWorkerAsync();
+            WriteToChat($"Connected to host server {AddressBox.Text}");
+            BtnConnect.IsEnabled = false;
+            BtnHost.IsEnabled = false;
+            AddressBox.IsEnabled = false;
+            BtnSend.IsEnabled = true;
         }
 
         private void Send(object sender, RoutedEventArgs e)
