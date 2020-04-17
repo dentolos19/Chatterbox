@@ -51,12 +51,12 @@ namespace Chatterbox.Graphics
 
         private void OpenAbout(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("This is not implemented yet!", "Chatterbox");
+            new WnAbout().Show();
         }
 
         private void OpenSettings(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("This is not implemented yet!", "Chatterbox");
+            new WnSettings().Show();
         }
 
         private void Host(object sender, RoutedEventArgs e)
@@ -72,6 +72,7 @@ namespace Chatterbox.Graphics
             _writer.AutoFlush = true;
             _reciever.RunWorkerAsync();
             Chat.Text = "Started hosting at port 8000.";
+            BtnSend.IsEnabled = true;
         }
 
         private void Connect(object sender, RoutedEventArgs e)
@@ -90,12 +91,14 @@ namespace Chatterbox.Graphics
                 _writer.AutoFlush = true;
                 _reciever.RunWorkerAsync();
                 Chat.Text = $"Connected to host server {AddressBox.Text}";
+                BtnSend.IsEnabled = true;
             }
             else
             {
                 BtnConnect.IsEnabled = true;
                 BtnHost.IsEnabled = true;
                 AddressBox.IsEnabled = true;
+                BtnSend.IsEnabled = false;
                 MessageBox.Show("Unable to connect to host server!", "Chatterbox");
             }
         }

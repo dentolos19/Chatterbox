@@ -15,7 +15,7 @@
         </DockPanel>
         <DockPanel>
             <DockPanel Dock="Bottom">
-                <Button DockPanel.Dock="Right" Content="Send" Width="50" IsDefault="True" Click="Send"/>
+                <Button x:Name="BtnSend" DockPanel.Dock="Right" Content="Send" Width="50" IsDefault="True" Click="Send" IsEnabled="False"/>
                 <TextBox x:Name="SendBox" Height="30" VerticalContentAlignment="Center"/>
             </DockPanel>
             <TextBox x:Name="Chat" IsReadOnly="True"/>
