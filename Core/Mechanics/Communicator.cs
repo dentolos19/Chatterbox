@@ -18,7 +18,6 @@ namespace Chatterbox.Core.Mechanics
         private Relay _toBeSent;
 
         private bool _imHost;
-        private bool _continueEnd;
 
         public Relay Recieved { get; private set; }
 
@@ -38,8 +37,6 @@ namespace Chatterbox.Core.Mechanics
         private void SendData(object sender, DoWorkEventArgs e)
         {
             _writer.WriteLine(_toBeSent.ToString());
-            if (_toBeSent.IsEnding)
-                _continueEnd = true;
             _sender.CancelAsync();
         }
 
