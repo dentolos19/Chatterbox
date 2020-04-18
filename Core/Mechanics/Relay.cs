@@ -4,7 +4,7 @@ using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
 
-namespace Chatterbox.Core
+namespace Chatterbox.Core.Mechanics
 {
 
     public class Relay

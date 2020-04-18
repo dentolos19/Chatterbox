@@ -3,8 +3,9 @@ using System.ComponentModel;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
+using System.Threading;
 
-namespace Chatterbox.Core
+namespace Chatterbox.Core.Mechanics
 {
 
     public class Communicator
@@ -17,6 +18,7 @@ namespace Chatterbox.Core
         private Relay _toBeSent;
 
         private bool _imHost;
+        private bool _continueEnd;
 
         public Relay Recieved { get; private set; }
 
@@ -24,6 +26,7 @@ namespace Chatterbox.Core
         private readonly BackgroundWorker _sender = new BackgroundWorker();
 
         public event EventHandler OnRecieved;
+        public event EventHandler OnStop;
 
         public Communicator()
         {
@@ -35,6 +38,8 @@ namespace Chatterbox.Core
         private void SendData(object sender, DoWorkEventArgs e)
         {
             _writer.WriteLine(_toBeSent.ToString());
+            if (_toBeSent.IsEnding)
+                _continueEnd = true;
             _sender.CancelAsync();
         }
 
@@ -48,7 +53,7 @@ namespace Chatterbox.Core
                     Recieved = Relay.Parse(data);
                     if (Recieved.IsEnding)
                     {
-                        Stop();
+                        Stop(true);
                         return;
                     }
                     OnRecieved?.Invoke(this, new EventArgs());
@@ -83,12 +88,16 @@ namespace Chatterbox.Core
             _reciever.RunWorkerAsync();
         }
 
-        public void Stop()
+        public void Stop(bool notFromMe = false)
         {
-            Send(new Relay
+            if (!notFromMe)
             {
-                IsEnding = true
-            });
+                Send(new Relay
+                {
+                    IsEnding = true
+                });
+            }
+            OnStop?.Invoke(this, new EventArgs());
             if (_imHost)
             {
                 _listener.Stop();

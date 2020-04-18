@@ -4,6 +4,7 @@ using System.Net;
 using System.Windows;
 using System.Windows.Media;
 using Chatterbox.Core;
+using Chatterbox.Core.Mechanics;
 using MahApps.Metro.Controls.Dialogs;
 
 namespace Chatterbox.Graphics
@@ -18,9 +19,24 @@ namespace Chatterbox.Graphics
         public WnMain()
         {
             _communicator.OnRecieved += Recieved;
+            _communicator.OnStop += Stop;
             InitializeComponent();
             if (App.Settings.AppTheme == "Dark")
                 Panel.Background = new BrushConverter().ConvertFrom("#FF444444") as Brush;
+        }
+
+        private void Stop(object sender, EventArgs e)
+        {
+            if (BnHost.IsEnabled)
+            {
+                WriteToChat("Stopped host server");
+                Host(null,null);
+            }
+            else if (BnConnect.IsEnabled)
+            {
+                WriteToChat("Disconnected from host server");
+                Connect(null, null);
+            }
         }
 
         private void WriteToChat(string message)
@@ -52,11 +68,6 @@ namespace Chatterbox.Graphics
         {
             try
             {
-                if (!Utilities.IsUserOnline())
-                {
-                    await this.ShowMessageAsync("I need something!", "An internet connection is required for this work!");
-                    return;
-                }
                 if (_isRunning)
                 {
                     _communicator.Stop();
@@ -66,12 +77,17 @@ namespace Chatterbox.Graphics
                     _isRunning = false;
                     return;
                 }
+                if (!Utilities.IsUserOnline())
+                {
+                    await this.ShowMessageAsync("I need something!", "An internet connection is required for this work!");
+                    return;
+                }
+                _isRunning = true;
                 _communicator.Host(App.Settings.HostingPort);
                 WriteToChat($"Started hosting at port {Utilities.GetPublicIp()}:{App.Settings.HostingPort}");
                 BnConnect.IsEnabled = false;
                 BnSend.IsEnabled = true;
                 BnHost.Content = "Stop";
-                _isRunning = true;
             }
             catch
             {
@@ -88,11 +104,6 @@ namespace Chatterbox.Graphics
         {
             try
             {
-                if (!Utilities.IsUserOnline())
-                {
-                    await this.ShowMessageAsync("I need something!", "An internet connection is required for this work!");
-                    return;
-                }
                 if (_isRunning)
                 {
                     _communicator.Stop();
@@ -102,17 +113,23 @@ namespace Chatterbox.Graphics
                     _isRunning = false;
                     return;
                 }
+                if (!Utilities.IsUserOnline())
+                {
+                    await this.ShowMessageAsync("I need something!", "An internet connection is required for this work!");
+                    return;
+                }
                 var raw = await this.ShowInputAsync("Your input is required!", "Enter the IP address to connect to.", new MetroDialogSettings
                 {
                     DefaultText = "127.0.0.1:8000"
                 });
                 var address = raw.Split(":");
+                _isRunning = true;
                 _communicator.Connect(new IPEndPoint(IPAddress.Parse(address[0]), int.Parse(address[1])));
                 WriteToChat($"Connected to host server {raw}");
                 BnHost.IsEnabled = false;
                 BnSend.IsEnabled = true;
                 BnConnect.Content = "Disconnect";
-                _isRunning = true;
+                
             }
             catch
             {
