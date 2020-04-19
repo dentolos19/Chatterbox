@@ -30,7 +30,6 @@ namespace Chatterbox.Core
             return client.DownloadString("http://ipinfo.io/ip").Replace("\n", string.Empty);
         }
 
-
     }
 
 }

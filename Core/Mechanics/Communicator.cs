@@ -3,7 +3,6 @@ using System.ComponentModel;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
-using System.Threading;
 
 namespace Chatterbox.Core.Mechanics
 {
@@ -25,6 +24,7 @@ namespace Chatterbox.Core.Mechanics
         private readonly BackgroundWorker _sender = new BackgroundWorker();
 
         public event EventHandler OnRecieved;
+
         public event EventHandler OnStop;
 
         public Communicator()

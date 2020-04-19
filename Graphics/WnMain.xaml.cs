@@ -30,7 +30,7 @@ namespace Chatterbox.Graphics
             if (BnHost.IsEnabled)
             {
                 WriteToChat("Stopped host server");
-                Host(null,null);
+                Host(null, null);
             }
             else if (BnConnect.IsEnabled)
             {
@@ -129,7 +129,7 @@ namespace Chatterbox.Graphics
                 BnHost.IsEnabled = false;
                 BnSend.IsEnabled = true;
                 BnConnect.Content = "Disconnect";
-                
+
             }
             catch
             {
