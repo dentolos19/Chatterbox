@@ -4,15 +4,13 @@ using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
 
-namespace Chatterbox.Core.Mechanics
+namespace Chatterbox.Core.Communication
 {
 
-    public class Relay
+    public class ComMessage
     {
 
-        private static readonly XmlSerializer Serializer = new XmlSerializer(typeof(Relay));
-
-        internal bool IsEnding { get; set; }
+        private static readonly XmlSerializer Serializer = new XmlSerializer(typeof(ComMessage));
 
         public string Name { get; set; }
 
@@ -33,13 +31,12 @@ namespace Chatterbox.Core.Mechanics
             return strWriter.ToString();
         }
 
-        public static Relay Parse(string data)
+        public static ComMessage Parse(string data)
         {
             var buffer = Encoding.Unicode.GetBytes(data);
             using var stream = new MemoryStream(buffer);
-            return Serializer.Deserialize(stream) as Relay;
+            return Serializer.Deserialize(stream) as ComMessage;
         }
-
     }
 
 }

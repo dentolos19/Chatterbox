@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30011.22
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chatterbox", "Chatterbox.csproj", "{D6DAA669-6DF4-4615-BB57-FC4DEA6A4BC1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chatterbox", "Chatterbox.csproj", "{796E8DEC-8B86-4845-9633-7554248C158C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,15 +11,15 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{D6DAA669-6DF4-4615-BB57-FC4DEA6A4BC1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D6DAA669-6DF4-4615-BB57-FC4DEA6A4BC1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D6DAA669-6DF4-4615-BB57-FC4DEA6A4BC1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D6DAA669-6DF4-4615-BB57-FC4DEA6A4BC1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{796E8DEC-8B86-4845-9633-7554248C158C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{796E8DEC-8B86-4845-9633-7554248C158C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{796E8DEC-8B86-4845-9633-7554248C158C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{796E8DEC-8B86-4845-9633-7554248C158C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {B47A7A01-7FF0-46D8-ACE9-49CFC9EEF72F}
+		SolutionGuid = {94526574-2298-4E25-87F4-0D73F9B3E073}
 	EndGlobalSection
 EndGlobal

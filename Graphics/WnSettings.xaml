@@ -1,58 +1,21 @@
-﻿<mahApps:MetroWindow x:Class="Chatterbox.Graphics.WnSettings"
-                     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                     xmlns:mahApps="http://metro.mahapps.com/winfx/xaml/controls"
-                     Title="Chatterbox Settings" ResizeMode="NoResize" SizeToContent="WidthAndHeight">
-    <DockPanel Width="500">
-        <DockPanel x:Name="Panel" DockPanel.Dock="Top" Height="50" Background="WhiteSmoke">
-            <Image Width="30" Margin="10,10,0,10" Source="/Resources/Icon.ico"/>
-            <Button DockPanel.Dock="Right" Content="Save" Width="75" Margin="0,10,10,10" Click="Save"/>
-            <Label Content="Chatterbox Settings" VerticalContentAlignment="Center" FontSize="16"/>
+﻿<Window x:Class="Chatterbox.Graphics.WnSettings"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Chatterbox Settings" ResizeMode="NoResize" SizeToContent="WidthAndHeight" WindowStartupLocation="CenterOwner">
+        <DockPanel Width="400">
+                <DockPanel DockPanel.Dock="Top" Height="50" Background="WhiteSmoke">
+                        <Image DockPanel.Dock="Left" Margin="10,10,0,10" Source="/Resources/Icon.ico" Width="30"/>
+                        <Button DockPanel.Dock="Right" Margin="0,10,10,10" Content="Save" Width="50" Click="Save"/>
+                        <Label Content="Chatterbox Settings" VerticalContentAlignment="Center" FontSize="16" Margin="10,10,10,10"/>
+                </DockPanel>
+                <StackPanel>
+                        <DockPanel Margin="10,10,10,10">
+                                <Label Content="Username" VerticalContentAlignment="Center" Width="100"/>
+                                <TextBox x:Name="CfgUsername" VerticalContentAlignment="Center"/>
+                        </DockPanel>
+                        <DockPanel Margin="10,0,10,10">
+                                <CheckBox x:Name="CfgAutoCheckUpdates" Content="Auto Check Updates" VerticalContentAlignment="Center"/>
+                        </DockPanel>
+                </StackPanel>
         </DockPanel>
-        <StackPanel>
-            <DockPanel Margin="10,10,10,10">
-                <Label Content="Username" VerticalContentAlignment="Center" Width="100"/>
-                <TextBox x:Name="CfgUsername" VerticalContentAlignment="Center"/>
-            </DockPanel>
-            <DockPanel Margin="10,0,10,10">
-                <Label Content="Hosting Port" VerticalContentAlignment="Center" Width="100"/>
-                <TextBox x:Name="CfgHostingPort"  VerticalContentAlignment="Center"/>
-            </DockPanel>
-            <DockPanel Margin="10,0,10,10">
-                <Label Content="App Theme" VerticalContentAlignment="Center" Width="100"/>
-                <ComboBox x:Name="CfgAppTheme"  VerticalContentAlignment="Center">
-                    <ComboBoxItem Content="Light"/>
-                    <ComboBoxItem Content="Dark"/>
-                </ComboBox>
-            </DockPanel>
-            <DockPanel Margin="10,0,10,10">
-                <Label Content="App Accent" VerticalContentAlignment="Center" Width="100"/>
-                <ComboBox x:Name="CfgAppAccent" VerticalContentAlignment="Center">
-                    <ComboBoxItem Content="Red"/>
-                    <ComboBoxItem Content="Green"/>
-                    <ComboBoxItem Content="Blue"/>
-                    <ComboBoxItem Content="Purple"/>
-                    <ComboBoxItem Content="Orange"/>
-                    <ComboBoxItem Content="Lime"/>
-                    <ComboBoxItem Content="Emerald"/>
-                    <ComboBoxItem Content="Teal"/>
-                    <ComboBoxItem Content="Cyan"/>
-                    <ComboBoxItem Content="Cobalt"/>
-                    <ComboBoxItem Content="Indigo"/>
-                    <ComboBoxItem Content="Violet"/>
-                    <ComboBoxItem Content="Pink"/>
-                    <ComboBoxItem Content="Magenta"/>
-                    <ComboBoxItem Content="Crimson"/>
-                    <ComboBoxItem Content="Amber"/>
-                    <ComboBoxItem Content="Yellow"/>
-                    <ComboBoxItem Content="Brown"/>
-                    <ComboBoxItem Content="Olive"/>
-                    <ComboBoxItem Content="Steel"/>
-                    <ComboBoxItem Content="Mauve"/>
-                    <ComboBoxItem Content="Taupe"/>
-                    <ComboBoxItem Content="Sienna"/>
-                </ComboBox>
-            </DockPanel>
-        </StackPanel>
-    </DockPanel>
-</mahApps:MetroWindow>
+</Window>

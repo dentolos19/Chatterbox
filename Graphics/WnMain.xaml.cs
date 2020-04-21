@@ -1,11 +1,9 @@
 ﻿using System;
-using System.ComponentModel;
+using System.Diagnostics;
 using System.Net;
 using System.Windows;
-using System.Windows.Media;
 using Chatterbox.Core;
-using Chatterbox.Core.Mechanics;
-using MahApps.Metro.Controls.Dialogs;
+using Chatterbox.Core.Communication;
 
 namespace Chatterbox.Graphics
 {
@@ -14,152 +12,118 @@ namespace Chatterbox.Graphics
     {
 
         private bool _isRunning;
-        private readonly Communicator _communicator = new Communicator();
+        private ComClient _client;
 
         public WnMain()
         {
-            _communicator.OnRecieved += Recieved;
-            _communicator.OnStop += Stop;
             InitializeComponent();
-            if (App.Settings.AppTheme == "Dark")
-                Panel.Background = new BrushConverter().ConvertFrom("#FF444444") as Brush;
-        }
-
-        private void Stop(object sender, EventArgs e)
-        {
-            if (BnHost.IsEnabled)
-            {
-                WriteToChat("Stopped host server");
-                Host(null, null);
-            }
-            else if (BnConnect.IsEnabled)
-            {
-                WriteToChat("Disconnected from host server");
-                Connect(null, null);
-            }
-        }
-
-        private void WriteToChat(string message)
-        {
-            BxChat.Text += $"\n{message}";
-        }
-
-        private void Recieved(object sender, EventArgs e)
-        {
-            Dispatcher.Invoke(() => { WriteToChat($"[{_communicator.Recieved.Time.ToShortTimeString()}] {_communicator.Recieved.Name}: {_communicator.Recieved.Message}"); });
-        }
-
-        private void Exit(object sender, RoutedEventArgs e)
-        {
-            Application.Current.Shutdown();
         }
 
         private void OpenAbout(object sender, RoutedEventArgs e)
         {
-            new WnAbout().ShowDialog();
+            new WnAbout
+            {
+                Owner = this
+            }.ShowDialog();
         }
 
         private void OpenSettings(object sender, RoutedEventArgs e)
         {
-            new WnSettings().ShowDialog();
+            new WnSettings
+            {
+                Owner = this
+            }.ShowDialog();
         }
 
-        private async void Host(object sender, RoutedEventArgs e)
+        private void Host(object sender, RoutedEventArgs e)
         {
-            try
+            if (_isRunning)
             {
-                if (_isRunning)
-                {
-                    _communicator.Stop();
-                    BnConnect.IsEnabled = true;
-                    BnSend.IsEnabled = false;
-                    BnHost.Content = "Host";
-                    _isRunning = false;
-                    return;
-                }
-                if (!Utilities.IsUserOnline())
-                {
-                    await this.ShowMessageAsync("I need something!", "An internet connection is required for this work!");
-                    return;
-                }
-                _isRunning = true;
-                _communicator.Host(App.Settings.HostingPort);
-                WriteToChat($"Started hosting at port {Utilities.GetPublicIp()}:{App.Settings.HostingPort}");
-                BnConnect.IsEnabled = false;
-                BnSend.IsEnabled = true;
-                BnHost.Content = "Stop";
-            }
-            catch
-            {
+                _client.Stop();
                 BnConnect.IsEnabled = true;
-                BnSend.IsEnabled = false;
                 BnHost.Content = "Host";
-                if (!_isRunning)
-                    WriteToChat("Unable to start hosting");
+                BnSend.IsEnabled = false;
                 _isRunning = false;
+                return;
             }
+            var dialog = new WnInput(true)
+            {
+                Owner = this
+            };
+            if (dialog.ShowDialog() != true)
+                return;
+            _client = new ComClient();
+            _client.OnRecieved += WriteRecieved;
+            _client.Host(dialog.Port);
+            WriteToChat($"Started hosting at {dialog.Port}!");
+            BnConnect.IsEnabled = false;
+            BnHost.Content = "Stop";
+            BnSend.IsEnabled = true;
+            _isRunning = true;
         }
 
-        private async void Connect(object sender, RoutedEventArgs e)
+        private void WriteRecieved(object sender, EventArgs e)
         {
-            try
+            Dispatcher.Invoke(() =>
             {
-                if (_isRunning)
-                {
-                    _communicator.Stop();
-                    BnHost.IsEnabled = true;
-                    BnSend.IsEnabled = false;
-                    BnConnect.Content = "Connect";
-                    _isRunning = false;
-                    return;
-                }
-                if (!Utilities.IsUserOnline())
-                {
-                    await this.ShowMessageAsync("I need something!", "An internet connection is required for this work!");
-                    return;
-                }
-                var raw = await this.ShowInputAsync("Your input is required!", "Enter the IP address to connect to.", new MetroDialogSettings
-                {
-                    DefaultText = "127.0.0.1:8000"
-                });
-                var address = raw.Split(":");
-                _isRunning = true;
-                _communicator.Connect(new IPEndPoint(IPAddress.Parse(address[0]), int.Parse(address[1])));
-                WriteToChat($"Connected to host server {raw}");
-                BnHost.IsEnabled = false;
-                BnSend.IsEnabled = true;
-                BnConnect.Content = "Disconnect";
+                WriteToChat($"[{_client.Recieved.Time.ToShortTimeString()}] {_client.Recieved.Name}: {_client.Recieved.Message}");
+            });
+        }
 
-            }
-            catch
+        private void Connect(object sender, RoutedEventArgs e)
+        {
+            if (_isRunning)
             {
+                _client.Stop();
+                BnConnect.Content = "Connect";
                 BnHost.IsEnabled = true;
                 BnSend.IsEnabled = false;
-                BnConnect.Content = "Connect";
-                if (!_isRunning)
-                    WriteToChat("Unable to connect to host server");
                 _isRunning = false;
+                return;
             }
+            var dialog = new WnInput
+            {
+                Owner = this
+            };
+            if (dialog.ShowDialog() != true)
+                return;
+            _client = new ComClient();
+            _client.OnRecieved += WriteRecieved;
+            _client.Connect(new IPEndPoint(IPAddress.Parse(dialog.Ip), dialog.Port));
+            WriteToChat($"Connected to host server {dialog.Ip}:{dialog.Port}!");
+            BnConnect.Content = "Disconnect";
+            BnHost.IsEnabled = false;
+            BnSend.IsEnabled = true;
+            _isRunning = true;
         }
 
         private void Send(object sender, RoutedEventArgs e)
         {
-            var data = new Relay
+            _client.Send(new ComMessage
             {
                 Name = App.Settings.Username,
                 Message = BxSend.Text
-            };
-            _communicator.Send(data);
-            WriteToChat($"[{data.Time.ToShortTimeString()}] {data.Name}: {data.Message}");
+            });
+            WriteToChat($"[{DateTime.Now.ToShortTimeString()}] You: {BxSend.Text}");
             BxSend.Text = string.Empty;
         }
 
-        private async void CheckIfRunning(object sender, CancelEventArgs e)
+        private void WriteToChat(string text)
         {
-            if (!_isRunning)
+            BxChat.Text += $"\n{text}";
+        }
+
+        private void CheckForUpdates(object sender, RoutedEventArgs e)
+        {
+            if (!App.Settings.AutoCheckUpdates)
                 return;
-            await this.ShowMessageAsync("Don't keep me running!", "Stop or disconnect before closing this app!");
-            e.Cancel = true;
+            if (!Utilities.IsUserOnline())
+                return;
+            if (!Utilities.IsUpdateAvailable())
+                return;
+            var result = MessageBox.Show("Update is available! Do you want to visit the downloads page?", "Chatterbox", MessageBoxButton.YesNo);
+            if (result == MessageBoxResult.Yes)
+                Process.Start("https://github.com/dentolos19/Chatterbox/releases");
         }
 
     }

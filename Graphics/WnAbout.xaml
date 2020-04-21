@@ -1,23 +1,22 @@
-﻿<mahApps:MetroWindow x:Class="Chatterbox.Graphics.WnAbout"
-                     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                     xmlns:mahApps="http://metro.mahapps.com/winfx/xaml/controls"
-                     Title="About Chatterbox" ResizeMode="NoResize" SizeToContent="WidthAndHeight" Loaded="CheckForUpdates">
-    <DockPanel Width="500">
-        <DockPanel x:Name="Panel" DockPanel.Dock="Top" Height="50" Background="WhiteSmoke">
-            <Image Width="30" Margin="10,10,0,10" Source="/Resources/Icon.ico"/>
-            <Button DockPanel.Dock="Right" Content="OK" Width="75" Margin="0,10,10,10" Click="Exit"/>
-            <Label Content="About Chatterbox" VerticalContentAlignment="Center" FontSize="16"/>
+﻿<Window x:Class="Chatterbox.Graphics.WnAbout"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="About Chatterbox" ResizeMode="NoResize" SizeToContent="WidthAndHeight" WindowStartupLocation="CenterOwner">
+        <DockPanel Width="400">
+                <DockPanel DockPanel.Dock="Top" Height="50" Background="WhiteSmoke">
+                        <Image DockPanel.Dock="Left" Margin="10,10,0,10" Source="/Resources/Icon.ico" Width="30"/>
+                        <Button DockPanel.Dock="Right" Margin="0,10,10,10" Content="OK" Width="50" Click="Exit"/>
+                        <Label Content="About Chatterbox" VerticalContentAlignment="Center" FontSize="16" Margin="10,10,10,10"/>
+                </DockPanel>
+                <StackPanel>
+                        <DockPanel Margin="10,10,10,10">
+                                <Label Content="Creator" VerticalContentAlignment="Center" Width="100"/>
+                                <TextBox Text="Dennise (Find me on GitHub, @dentolos19)" VerticalContentAlignment="Center" IsReadOnly="True"/>
+                        </DockPanel>
+                        <DockPanel Margin="10,0,10,10">
+                                <Label Content="Version" VerticalContentAlignment="Center" Width="100"/>
+                                <TextBox Text="1.0.0 (Pre-Release)" VerticalContentAlignment="Center" IsReadOnly="True"/>
+                        </DockPanel>
+                </StackPanel>
         </DockPanel>
-        <StackPanel>
-            <DockPanel Margin="10,10,10,10">
-                <Label Content="Creator" VerticalContentAlignment="Center" Width="100"/>
-                <TextBox Text="Dennise (Find me on GitHub, @dentolos19)" VerticalContentAlignment="Center" IsReadOnly="True"/>
-            </DockPanel>
-            <DockPanel Margin="10,0,10,10">
-                <Label Content="Version" VerticalContentAlignment="Center" Width="100"/>
-                <TextBox Text="1.0.0 (Pre-Release)" VerticalContentAlignment="Center" IsReadOnly="True"/>
-            </DockPanel>
-        </StackPanel>
-    </DockPanel>
-</mahApps:MetroWindow>
+</Window>
