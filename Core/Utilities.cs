@@ -24,6 +24,12 @@ namespace Chatterbox.Core
             return Version.Parse(data) > Assembly.GetExecutingAssembly().GetName().Version;
         }
 
+        public static string GetPublicIpAddress()
+        {
+            using var client = new WebClient();
+            return client.DownloadString("http://ipinfo.io/ip").Replace("\n", string.Empty);
+        }
+
     }
 
 }

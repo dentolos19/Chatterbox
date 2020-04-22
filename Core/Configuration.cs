@@ -13,6 +13,8 @@ namespace Chatterbox.Core
 
         public bool AutoCheckUpdates { get; set; } = true;
 
+        public bool UsePortForwarding { get; set; } = false;
+
         public string Username { get; set; } = Environment.UserName;
 
         public void Save()

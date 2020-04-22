@@ -3,6 +3,9 @@ using System.ComponentModel;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
+using System.Threading;
+using System.Threading.Tasks;
+using Open.Nat;
 
 namespace Chatterbox.Core.Communication
 {
@@ -55,11 +58,17 @@ namespace Chatterbox.Core.Communication
             _reciever.RunWorkerAsync();
         }
 
-        public void Host(int port)
+        public async void Host(int port, bool usePortForwarding = false)
         {
+            if (usePortForwarding)
+            {
+                var discoverer = new NatDiscoverer();
+                var device = await discoverer.DiscoverDeviceAsync(PortMapper.Upnp, new CancellationTokenSource(10000));
+                await device.CreatePortMapAsync(new Mapping(Protocol.Tcp, port + 1, port, "Chatterbox"));
+            }
             var listener = new TcpListener(IPAddress.Any, port);
             listener.Start();
-            _client = listener.AcceptTcpClient();
+            _client = await listener.AcceptTcpClientAsync();
             listener.Stop();
             _writer = new StreamWriter(_client.GetStream());
             _reader = new StreamReader(_client.GetStream());

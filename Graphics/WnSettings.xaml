@@ -16,6 +16,9 @@
                         <DockPanel Margin="10,0,10,10">
                                 <CheckBox x:Name="CfgAutoCheckUpdates" Content="Auto Check Updates" VerticalContentAlignment="Center"/>
                         </DockPanel>
+                        <DockPanel Margin="10,0,10,10">
+                                <CheckBox x:Name="CfgUsePortForwarding" Content="Use Port Forwarding" VerticalContentAlignment="Center"/>
+                        </DockPanel>
                 </StackPanel>
         </DockPanel>
 </Window>

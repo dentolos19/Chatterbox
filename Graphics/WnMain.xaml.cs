@@ -46,6 +46,8 @@ namespace Chatterbox.Graphics
                 _isRunning = false;
                 return;
             }
+            BnConnect.IsEnabled = false;
+            BnHost.Content = "Stop";
             var dialog = new WnInput(true)
             {
                 Owner = this
@@ -54,10 +56,9 @@ namespace Chatterbox.Graphics
                 return;
             _client = new ComClient();
             _client.OnRecieved += WriteRecieved;
-            _client.Host(dialog.Port);
-            WriteToChat($"Started hosting at {dialog.Port}!");
-            BnConnect.IsEnabled = false;
-            BnHost.Content = "Stop";
+            var address = Utilities.GetPublicIpAddress();
+            WriteToChat($"Hosting server at public {address}:{dialog.Port} or private 127.0.0.1:{dialog.Port + 1}!");
+            _client.Host(dialog.Port, App.Settings.UsePortForwarding);
             BnSend.IsEnabled = true;
             _isRunning = true;
         }
@@ -81,6 +82,8 @@ namespace Chatterbox.Graphics
                 _isRunning = false;
                 return;
             }
+            BnConnect.Content = "Disconnect";
+            BnHost.IsEnabled = false;
             var dialog = new WnInput
             {
                 Owner = this
@@ -91,8 +94,6 @@ namespace Chatterbox.Graphics
             _client.OnRecieved += WriteRecieved;
             _client.Connect(new IPEndPoint(IPAddress.Parse(dialog.Ip), dialog.Port));
             WriteToChat($"Connected to host server {dialog.Ip}:{dialog.Port}!");
-            BnConnect.Content = "Disconnect";
-            BnHost.IsEnabled = false;
             BnSend.IsEnabled = true;
             _isRunning = true;
         }
