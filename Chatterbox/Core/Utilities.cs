@@ -1,33 +1,23 @@
 ﻿using System;
-using System.Net;
-using System.Reflection;
-using System.Runtime.InteropServices;
+using System.Windows;
 
 namespace Chatterbox.Core
 {
 
-    public static class Utilities
+    public class Utilities
     {
 
-        [DllImport("wininet.dll", SetLastError = true)]
-        private static extern bool InternetGetConnectedState(out int flags, int reserved);
-
-        public static bool IsUserOnline()
+        public static string GetRandomAccent()
         {
-            return InternetGetConnectedState(out _, 0);
+            var accents = new[] { "Red", "Green", "Blue", "Purple", "Orange", "Lime", "Emerald", "Teal", "Cyan", "Cobalt", "Indigo", "Violet", "Pink", "Magenta", "Crimson", "Amber", "Yellow", "Brown", "Olive", "Steel", "Mauve", "Taupe", "Sienna" };
+            var random = new Random();
+            return accents[random.Next(accents.Length)];
         }
 
-        public static bool IsUpdateAvailable()
+        public static void SetAppTheme(string accent)
         {
-            using var client = new WebClient();
-            var data = client.DownloadString("https://raw.githubusercontent.com/dentolos19/Chatterbox/master/VERSION");
-            return Version.Parse(data) > Assembly.GetExecutingAssembly().GetName().Version;
-        }
-
-        public static string GetPublicIpAddress()
-        {
-            using var client = new WebClient();
-            return client.DownloadString("http://ipinfo.io/ip").Replace("\n", string.Empty);
+            var dictionary = new ResourceDictionary { Source = new Uri($"pack://application:,,,/MahApps.Metro;component/Styles/Themes/Dark.{accent}.xaml") };
+            Application.Current.Resources.MergedDictionaries.Add(dictionary);
         }
 
     }

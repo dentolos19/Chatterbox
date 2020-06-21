@@ -6,36 +6,24 @@
     <UseWPF>true</UseWPF>
     <StartupObject>Chatterbox.App</StartupObject>
     <Authors>Dennise Catolos</Authors>
+    <Company>Aprodots</Company>
     <Copyright>Copyright © 2020</Copyright>
-    <NeutralLanguage>en</NeutralLanguage>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>Properties\AssemblyKey.snk</AssemblyOriginatorKeyFile>
     <ApplicationIcon>Resources\Icon.ico</ApplicationIcon>
-    <Version>1.0.0</Version>
-    <Company>Aprodots</Company>
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Properties\PublishProfiles\**" />
-    <EmbeddedResource Remove="Properties\PublishProfiles\**" />
-    <None Remove="Properties\PublishProfiles\**" />
-    <Page Remove="Properties\PublishProfiles\**" />
+    <None Remove="Resources\Logo.png" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove=".gitattributes" />
-    <None Remove=".gitignore" />
-    <None Remove="LICENSE" />
-    <None Remove="Resources\Icon.ico" />
-    <None Remove="VERSION" />
+    <PackageReference Include="MahApps.Metro" Version="2.0.1" />
+    <PackageReference Include="MaterialDesignThemes.MahApps" Version="0.1.4" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Open.NAT.Core" Version="2.1.0.5" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Resource Include="Resources\Icon.ico" />
+    <Resource Include="Resources\Logo.png" />
   </ItemGroup>
 
 </Project>

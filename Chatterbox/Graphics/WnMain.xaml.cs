@@ -1,9 +1,9 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Net;
 using System.Windows;
 using Chatterbox.Core;
-using Chatterbox.Core.Communication;
+using Chatterbox.Core.Comms;
+using MahApps.Metro.Controls.Dialogs;
 
 namespace Chatterbox.Graphics
 {
@@ -12,119 +12,94 @@ namespace Chatterbox.Graphics
     {
 
         private bool _isRunning;
-        private ComClient _client;
-
+        private CommClient _client;
+        
         public WnMain()
         {
             InitializeComponent();
         }
 
-        private void OpenAbout(object sender, RoutedEventArgs e)
+        private void Send(object sender, RoutedEventArgs args)
         {
-            new WnAbout
-            {
-                Owner = this
-            }.ShowDialog();
+            var message = new CommMessage { Username = App.Settings.Username, Message = SendMessageBox.Text };
+            _client.Send(message);
+            PasteToChat(message);
+            SendMessageBox.Text = string.Empty;
         }
 
-        private void OpenSettings(object sender, RoutedEventArgs e)
-        {
-            new WnSettings
-            {
-                Owner = this
-            }.ShowDialog();
-        }
-
-        private void Host(object sender, RoutedEventArgs e)
+        private void Host(object sender, RoutedEventArgs args)
         {
             if (_isRunning)
             {
                 _client.Stop();
-                BnConnect.IsEnabled = true;
-                BnHost.Content = "Host";
-                BnSend.IsEnabled = false;
+                ConnectButton.IsEnabled = true;
+                HostButton.Content = "Host";
+                SendButton.IsEnabled = false;
                 _isRunning = false;
                 return;
             }
-            BnConnect.IsEnabled = false;
-            BnHost.Content = "Stop";
-            var dialog = new WnInput(true)
-            {
-                Owner = this
-            };
-            if (dialog.ShowDialog() != true)
-                return;
-            _client = new ComClient();
-            _client.OnRecieved += WriteRecieved;
-            var address = Utilities.GetPublicIpAddress();
-            WriteToChat($"Hosting server at public {address}:{dialog.Port} or private 127.0.0.1:{dialog.Port + 1}!");
-            _client.Host(dialog.Port, App.Settings.UsePortForwarding);
-            BnSend.IsEnabled = true;
+            ConnectButton.IsEnabled = false;
+            HostButton.Content = "Stop";
+            // var dialog = new WnInput(true)
+            // {
+            //     Owner = this
+            // };
+            // if (dialog.ShowDialog() != true)
+            //     return;
+            _client = new CommClient();
+            _client.OnReceive += ReceiveMessage;
+            // var address = Utilities.GetPublicIpAddress();
+            // WriteToChat($"Hosting server at public {address}:{dialog.Port} or private 127.0.0.1:{dialog.Port + 1}!");
+            // _client.Host(dialog.Port, App.Settings.UsePortForwarding);
+            SendButton.IsEnabled = true;
             _isRunning = true;
         }
 
-        private void WriteRecieved(object sender, EventArgs e)
-        {
-            Dispatcher.Invoke(() =>
-            {
-                WriteToChat($"[{_client.Recieved.Time.ToShortTimeString()}] {_client.Recieved.Name}: {_client.Recieved.Message}");
-            });
-        }
-
-        private void Connect(object sender, RoutedEventArgs e)
+        private void Connect(object sender, RoutedEventArgs args)
         {
             if (_isRunning)
             {
                 _client.Stop();
-                BnConnect.Content = "Connect";
-                BnHost.IsEnabled = true;
-                BnSend.IsEnabled = false;
+                ConnectButton.Content = "Connect";
+                HostButton.IsEnabled = true;
+                SendButton.IsEnabled = false;
                 _isRunning = false;
                 return;
             }
-            BnConnect.Content = "Disconnect";
-            BnHost.IsEnabled = false;
-            var dialog = new WnInput
-            {
-                Owner = this
-            };
-            if (dialog.ShowDialog() != true)
-                return;
-            _client = new ComClient();
-            _client.OnRecieved += WriteRecieved;
-            _client.Connect(new IPEndPoint(IPAddress.Parse(dialog.Ip), dialog.Port));
-            WriteToChat($"Connected to host server {dialog.Ip}:{dialog.Port}!");
-            BnSend.IsEnabled = true;
+            ConnectButton.Content = "Disconnect";
+            HostButton.IsEnabled = false;
+            // var dialog = new WnInput
+            // {
+            //     Owner = this
+            // };
+            // if (dialog.ShowDialog() != true)
+            //    return;
+            _client = new CommClient();
+            _client.OnReceive += ReceiveMessage;
+            // _client.Connect(new IPEndPoint(IPAddress.Parse(dialog.Ip), dialog.Port));
+            // WriteToChat($"Connected to host server {dialog.Ip}:{dialog.Port}!");
+            SendButton.IsEnabled = true;
             _isRunning = true;
         }
 
-        private void Send(object sender, RoutedEventArgs e)
+        private void ReceiveMessage(object sender, EventArgs args)
         {
-            _client.Send(new ComMessage
-            {
-                Name = App.Settings.Username,
-                Message = BxSend.Text
-            });
-            WriteToChat($"[{DateTime.Now.ToShortTimeString()}] You: {BxSend.Text}");
-            BxSend.Text = string.Empty;
+            Dispatcher.Invoke(() => { PasteToChat(_client.ReceivedMessage); });
         }
 
-        private void WriteToChat(string text)
+        private void PasteToChat(CommMessage message)
         {
-            BxChat.Text += $"\n{text}";
+            // TODO
         }
 
-        private void CheckForUpdates(object sender, RoutedEventArgs e)
+        private async void ShowSettings(object sender, RoutedEventArgs args)
         {
-            if (!App.Settings.AutoCheckUpdates)
-                return;
-            if (!Utilities.IsUserOnline())
-                return;
-            if (!Utilities.IsUpdateAvailable())
-                return;
-            var result = MessageBox.Show("Update is available! Do you want to visit the downloads page?", "Chatterbox", MessageBoxButton.YesNo);
-            if (result == MessageBoxResult.Yes)
-                Process.Start("https://github.com/dentolos19/Chatterbox/releases");
+            await this.ShowMessageAsync("Internal code message", "This function is not available yet.");
+        }
+
+        private void Exit(object sender, RoutedEventArgs args)
+        {
+            Application.Current.Shutdown();
         }
 
     }

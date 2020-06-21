@@ -4,18 +4,16 @@ using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
 
-namespace Chatterbox.Core.Communication
+namespace Chatterbox.Core.Comms
 {
 
-    public class ComMessage
+    public class CommMessage
     {
 
-        private static readonly XmlSerializer Serializer = new XmlSerializer(typeof(ComMessage));
+        private static readonly XmlSerializer Serializer = new XmlSerializer(typeof(CommMessage));
 
-        public string Name { get; set; }
-
+        public string Username { get; set; }
         public string Message { get; set; }
-
         public DateTime Time { get; } = DateTime.Now;
 
         public override string ToString()
@@ -31,12 +29,13 @@ namespace Chatterbox.Core.Communication
             return strWriter.ToString();
         }
 
-        public static ComMessage Parse(string data)
+        public static CommMessage Parse(string data)
         {
             var buffer = Encoding.Unicode.GetBytes(data);
             using var stream = new MemoryStream(buffer);
-            return Serializer.Deserialize(stream) as ComMessage;
+            return (CommMessage)Serializer.Deserialize(stream);
         }
+
     }
 
 }
