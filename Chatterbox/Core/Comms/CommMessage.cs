@@ -14,6 +14,7 @@ namespace Chatterbox.Core.Comms
 
         public string Username { get; set; }
         public string Message { get; set; }
+        public string Command { get; set; } = "message";
         public DateTime Time { get; } = DateTime.Now;
 
         public override string ToString()

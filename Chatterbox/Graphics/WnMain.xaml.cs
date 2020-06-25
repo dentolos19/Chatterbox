@@ -12,6 +12,7 @@ namespace Chatterbox.Graphics
     {
 
         private bool _isRunning;
+        private bool _isHost;
         private CommClient _client;
         
         public WnMain()
@@ -35,6 +36,7 @@ namespace Chatterbox.Graphics
                 HostButton.Content = "Host";
                 SendButton.IsEnabled = false;
                 _isRunning = false;
+                _isHost = false;
                 return;
             }
             var input = await this.ShowInputAsync("Input required!", "Enter any number between 1024 and 65535 to register port.", new MetroDialogSettings { CustomResourceDictionary = App.ResourceDialog, DefaultText = new Random().Next(1024, 65535).ToString() });
@@ -43,11 +45,11 @@ namespace Chatterbox.Graphics
             _client = new CommClient();
             _client.OnReceive += ReceiveMessage;
             _client.Host(int.Parse(input));
-            SendButton.IsEnabled = true;
             ConnectButton.IsEnabled = false;
             HostButton.Content = "Stop";
             _isRunning = true;
-            WriteToChat(new CommMessage { Username = "Chatterbox", Message = "Host started!" });
+            _isHost = true;
+            WriteToChat(new CommMessage { Username = "Chatterbox", Message = "Host started! Waiting for users to connect..." });
         }
 
         private async void Connect(object sender, RoutedEventArgs args)
@@ -72,11 +74,21 @@ namespace Chatterbox.Graphics
             ConnectButton.Content = "Disconnect";
             HostButton.IsEnabled = false;
             _isRunning = true;
-            WriteToChat(new CommMessage { Username = "Chatterbox", Message = "Connected to host!" });
+            _client.Send(new CommMessage { Username = App.Settings.Username, Command = "connectedToHost" });
+            WriteToChat(new CommMessage { Username = "Chatterbox", Message = "Connected to host! You may start talking. :)" });
         }
 
         private void ReceiveMessage(object sender, EventArgs args)
         {
+            switch (_client.ReceivedMessage.Command)
+            {
+                case "connectedToHost":
+                    if (!_isHost)
+                        return;
+                    Dispatcher.Invoke(() => { SendButton.IsEnabled = true; });
+                    Dispatcher.Invoke(() => { WriteToChat(new CommMessage { Username = "Chatterbox", Message = $"User \"{_client.ReceivedMessage.Username}\" has connected to server! You may start talking. :)" }); });
+                    return;
+            }
             Dispatcher.Invoke(() => { WriteToChat(_client.ReceivedMessage); });
         }
 
@@ -85,9 +97,9 @@ namespace Chatterbox.Graphics
             MessageStack.Items.Add(new CnMessageItem(message));
         }
 
-        private async void ShowSettings(object sender, RoutedEventArgs args)
+        private void ShowSettings(object sender, RoutedEventArgs args)
         {
-            await this.ShowMessageAsync("Internal code message", "This function is not available yet.");
+            new WnSettings { Owner = this }.Show();
         }
 
         private void Exit(object sender, RoutedEventArgs args)
