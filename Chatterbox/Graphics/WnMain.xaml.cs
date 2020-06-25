@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Net;
 using System.Windows;
-using Chatterbox.Core;
 using Chatterbox.Core.Comms;
+using Chatterbox.Graphics.Controls;
 using MahApps.Metro.Controls.Dialogs;
 
 namespace Chatterbox.Graphics
@@ -21,13 +21,12 @@ namespace Chatterbox.Graphics
 
         private void Send(object sender, RoutedEventArgs args)
         {
-            var message = new CommMessage { Username = App.Settings.Username, Message = SendMessageBox.Text };
-            _client.Send(message);
-            PasteToChat(message);
+            _client.Send(new CommMessage { Username = App.Settings.Username, Message = SendMessageBox.Text });
+            WriteToChat(new CommMessage { Username = App.Settings.Username + " (You)", Message = SendMessageBox.Text });
             SendMessageBox.Text = string.Empty;
         }
 
-        private void Host(object sender, RoutedEventArgs args)
+        private async void Host(object sender, RoutedEventArgs args)
         {
             if (_isRunning)
             {
@@ -38,24 +37,20 @@ namespace Chatterbox.Graphics
                 _isRunning = false;
                 return;
             }
-            ConnectButton.IsEnabled = false;
-            HostButton.Content = "Stop";
-            // var dialog = new WnInput(true)
-            // {
-            //     Owner = this
-            // };
-            // if (dialog.ShowDialog() != true)
-            //     return;
+            var input = await this.ShowInputAsync("Input required!", "Enter any number between 1024 and 65535 to register port.", new MetroDialogSettings { CustomResourceDictionary = App.ResourceDialog, DefaultText = new Random().Next(1024, 65535).ToString() });
+            if (string.IsNullOrEmpty(input))
+                return;
             _client = new CommClient();
             _client.OnReceive += ReceiveMessage;
-            // var address = Utilities.GetPublicIpAddress();
-            // WriteToChat($"Hosting server at public {address}:{dialog.Port} or private 127.0.0.1:{dialog.Port + 1}!");
-            // _client.Host(dialog.Port, App.Settings.UsePortForwarding);
+            _client.Host(int.Parse(input));
             SendButton.IsEnabled = true;
+            ConnectButton.IsEnabled = false;
+            HostButton.Content = "Stop";
             _isRunning = true;
+            WriteToChat(new CommMessage { Username = "Chatterbox", Message = "Host started!" });
         }
 
-        private void Connect(object sender, RoutedEventArgs args)
+        private async void Connect(object sender, RoutedEventArgs args)
         {
             if (_isRunning)
             {
@@ -66,30 +61,28 @@ namespace Chatterbox.Graphics
                 _isRunning = false;
                 return;
             }
-            ConnectButton.Content = "Disconnect";
-            HostButton.IsEnabled = false;
-            // var dialog = new WnInput
-            // {
-            //     Owner = this
-            // };
-            // if (dialog.ShowDialog() != true)
-            //    return;
+            var input = await this.ShowInputAsync("Input required!", "Enter any an IP address and port to connect to.", new MetroDialogSettings { CustomResourceDictionary = App.ResourceDialog, DefaultText = "127.0.0.1:8000" });
+            if (string.IsNullOrEmpty(input))
+                return;
+            var endpoint = input.Split(":");
             _client = new CommClient();
             _client.OnReceive += ReceiveMessage;
-            // _client.Connect(new IPEndPoint(IPAddress.Parse(dialog.Ip), dialog.Port));
-            // WriteToChat($"Connected to host server {dialog.Ip}:{dialog.Port}!");
+            _client.Connect(new IPEndPoint(IPAddress.Parse(endpoint[0]), int.Parse(endpoint[1])));
             SendButton.IsEnabled = true;
+            ConnectButton.Content = "Disconnect";
+            HostButton.IsEnabled = false;
             _isRunning = true;
+            WriteToChat(new CommMessage { Username = "Chatterbox", Message = "Connected to host!" });
         }
 
         private void ReceiveMessage(object sender, EventArgs args)
         {
-            Dispatcher.Invoke(() => { PasteToChat(_client.ReceivedMessage); });
+            Dispatcher.Invoke(() => { WriteToChat(_client.ReceivedMessage); });
         }
 
-        private void PasteToChat(CommMessage message)
+        private void WriteToChat(CommMessage message)
         {
-            // TODO
+            MessageStack.Items.Add(new CnMessageItem(message));
         }
 
         private async void ShowSettings(object sender, RoutedEventArgs args)

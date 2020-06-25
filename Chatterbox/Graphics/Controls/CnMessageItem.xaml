@@ -1,0 +1,10 @@
+﻿<UserControl x:Class="Chatterbox.Graphics.Controls.CnMessageItem"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Height="30">
+    <DockPanel>
+        <Label x:Name="UserName" DockPanel.Dock="Left" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Width="150" Background="#FF333333"/>
+        <Label x:Name="MessageTime" DockPanel.Dock="Right" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Width="150" Background="#FF333333"/>
+        <Label x:Name="UserMessage" VerticalContentAlignment="Center"/>
+    </DockPanel>
+</UserControl>

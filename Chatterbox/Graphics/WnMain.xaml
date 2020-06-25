@@ -15,9 +15,9 @@
         <DockPanel>
             <DockPanel DockPanel.Dock="Bottom" Height="30">
                 <Button x:Name="SendButton" DockPanel.Dock="Right" Content="Send" Width="100" IsDefault="True" IsEnabled="False" Click="Send"/>
-                <TextBox x:Name="SendMessageBox" mahApps:TextBoxHelper.Watermark="Message" VerticalContentAlignment="Center" IsEnabled="False"/>
+                <TextBox x:Name="SendMessageBox" mahApps:TextBoxHelper.Watermark="Message" VerticalContentAlignment="Center"/>
             </DockPanel>
-            <StackPanel x:Name="MessageStack"/>
+            <ListBox x:Name="MessageStack"/>
         </DockPanel>
     </DockPanel>
 </mahApps:MetroWindow>
