@@ -3,3 +3,11 @@
 This is just a simple TCP/IP-based communication program! I made this project for learning more about networking and peer-to-peer connections between different users in the internet. This project is discontinued, until when I get my motivation to continue working on this project.
 
 ![Preview](https://dentolos19.github.io/previews/chatterbox.png)
+
+### Contributing
+
+Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
+
+### License
+
+This project is licensed with the [MIT License](https://choosealicense.com/licenses/mit).
