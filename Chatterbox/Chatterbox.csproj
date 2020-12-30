@@ -4,10 +4,15 @@
 		<OutputType>WinExe</OutputType>
 		<TargetFramework>netcoreapp3.1</TargetFramework>
 		<UseWPF>true</UseWPF>
+		<ApplicationIcon>Resources\Icon.ico</ApplicationIcon>
 	</PropertyGroup>
 
 	<ItemGroup>
 		<ProjectReference Include="..\Chatterbox.Core\Chatterbox.Core.csproj"/>
+	</ItemGroup>
+
+	<ItemGroup>
+		<Resource Include="Resources\Assets\Icon.png"/>
 	</ItemGroup>
 
 </Project>
