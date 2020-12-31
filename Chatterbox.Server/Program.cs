@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
@@ -13,15 +12,17 @@ namespace Chatterbox.Server
     public static class Program
     {
 
-        private const ushort DefaultPort = 8000;
+        private static CbLogger Logger { get; } = new CbLogger();
 
-        private static ushort Port { get; set; }
+        private static ushort Port { get; set; } = 8000;
 
-        private static void Main(string[] args) => MainAsync(args).GetAwaiter().GetResult();
-
-        private static async Task MainAsync(IEnumerable<string> args)
+        private static void Main(string[] args)
         {
-            Port = DefaultPort;
+            MainAsync(args).GetAwaiter().GetResult();
+        }
+
+        private static async Task MainAsync(string[] args)
+        {
             Parser.Default.ParseArguments<ProgramOptions>(args).WithParsed(options =>
             {
                 if (options.Port == 0)
@@ -30,7 +31,7 @@ namespace Chatterbox.Server
                 }
                 else if (options.Port < 1024 || options.Port > 49151)
                 {
-                    Log("Port cannot be lower than 1024 or greater than 49151.");
+                    Logger.Log("Port cannot be lower than 1024 or greater than 49151.");
                 }
                 else
                 {
@@ -39,7 +40,7 @@ namespace Chatterbox.Server
             });
             var listener = new TcpListener(IPAddress.Any, Port);
             listener.Start();
-            Log($"Started listening at port {Port}");
+            Logger.Log($"Started hosting at port {Port}.");
             listener.BeginAcceptTcpClient(HandleClient, listener);
             await Task.Delay(-1);
         }
@@ -49,29 +50,34 @@ namespace Chatterbox.Server
             if (!(result.AsyncState is TcpListener listener))
                 return;
             var client = listener.EndAcceptTcpClient(result);
+            var endpoint = client.Client.RemoteEndPoint;
+            Logger.Log($"A client connected with IP of {endpoint}.");
             listener.BeginAcceptTcpClient(HandleClient, listener);
-            Log("A client connected.");
-            var stream = client.GetStream();
-            var reader = new StreamReader(stream);
+            var reader = new StreamReader(client.GetStream());
             while (client.Connected)
             {
-                if (client.Client.Poll(0, SelectMode.SelectRead))
+                try
                 {
+                    if (client?.Client == null || !client.Client.Connected)
+                        break;
+                    if (!client.Client.Poll(0, SelectMode.SelectRead))
+                        continue;
                     var buffer = new byte[1];
                     if (client.Client.Receive(buffer, SocketFlags.Peek) == 0)
                         break;
                 }
-                var data = reader.ReadLine();
-                if (string.IsNullOrEmpty(data))
+                catch
+                {
+                    break;
+                }
+                var received = reader.ReadLine();
+                if (string.IsNullOrEmpty(received))
                     continue;
-                // TODO: Send message to all other connected client
-            }
-            Log("A client disconnected.");
-        }
+                var parsed = CbMessage.Parse(received);
+                Logger.Log($"{parsed.Username}: {parsed.Content}");
 
-        private static void Log(string message)
-        {
-            Console.WriteLine($"[{DateTime.Now:yyyy-MM-dd @ HH:mm:ss}] {message}");
+            }
+            Logger.Log($"A client disconnected with IP of {endpoint}.");
         }
 
     }

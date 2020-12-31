@@ -12,7 +12,7 @@ namespace Chatterbox.Core
         private static readonly XmlSerializer Serializer = new XmlSerializer(typeof(CbMessage));
 
         public string Username { get; set; }
-        public string Message { get; set; }
+        public string Content { get; set; }
 
         public static CbMessage Parse(string data)
         {
