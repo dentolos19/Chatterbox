@@ -16,3 +16,7 @@
 </p>
 
 This is just a simple TCP/IP-based communication program! I made this project to learn more about networking and peer-to-peer connections between different users in the internet.
+
+## Screenshots
+
+![](./.github/screenshots/0.png)

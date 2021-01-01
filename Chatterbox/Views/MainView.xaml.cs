@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Net.Sockets;
 using System.Windows;
 using Chatterbox.Controls;
@@ -17,6 +18,8 @@ namespace Chatterbox.Views
         {
             InitializeComponent();
             UsernameInput.Text = Environment.UserName;
+            UsernameInput.Focus();
+            ConnectButton.IsDefault = true;
             MessageInput.IsEnabled = false;
             SendButton.IsEnabled = false;
         }
@@ -34,7 +37,7 @@ namespace Chatterbox.Views
                 {
                     MessageStack.Items.Add(new MessageItem(new CbMessage
                     {
-                        Username = "Client",
+                        Username = "Chatterbox",
                         Message = $"Unable to connect to host. Reason: {error.Message}",
                         Creator = CbMessageCreator.Internal
                     }));
@@ -42,7 +45,7 @@ namespace Chatterbox.Views
                 }
                 MessageStack.Items.Add(new MessageItem(new CbMessage
                 {
-                    Username = "Client",
+                    Username = "Chatterbox",
                     Message = $"Connected to {client.Client.RemoteEndPoint}.",
                     Creator = CbMessageCreator.Internal
                 }));
@@ -53,10 +56,13 @@ namespace Chatterbox.Views
                 UsernameInput.IsEnabled = false;
                 IpInput.IsEnabled = false;
                 PortInput.IsEnabled = false;
+                ConnectButton.IsDefault = false;
+                ConnectButton.IsCancel = true;
                 ConnectButton.Content = "Disconnect";
 
                 MessageInput.IsEnabled = true;
                 SendButton.IsEnabled = true;
+                SendButton.IsDefault = true;
             }
             else
             {
@@ -66,10 +72,14 @@ namespace Chatterbox.Views
                 UsernameInput.IsEnabled = true;
                 IpInput.IsEnabled = true;
                 PortInput.IsEnabled = true;
+                ConnectButton.IsDefault = true;
+                ConnectButton.IsCancel = false;
                 ConnectButton.Content = "Connect";
 
                 MessageInput.IsEnabled = false;
+                MessageInput.Focus();
                 SendButton.IsEnabled = false;
+                SendButton.IsDefault = false;
             }
         }
 
@@ -86,7 +96,7 @@ namespace Chatterbox.Views
 
         private void SendMessage(object sender, RoutedEventArgs args)
         {
-            _connection?.Send(new CbMessage
+            _connection?.SendAsync(new CbMessage
             {
                 Username = UsernameInput.Text,
                 Message = MessageInput.Text,
@@ -101,13 +111,27 @@ namespace Chatterbox.Views
             {
                 MessageStack.Items.Add(new MessageItem(new CbMessage
                 {
-                    Username = "Client",
+                    Username = "Chatterbox",
                     Message = $"Disconnected from host. Reason: {args.Reason}",
                     Creator = CbMessageCreator.Internal
                 }));
                 if (_connection != null)
                     Connect(null, null);
             });
+        }
+
+        private void EnsureConnectionDisposed(object sender, CancelEventArgs args)
+        {
+            if (_connection == null)
+                return;
+            if (MessageBox.Show("Are you sure that you want to close this app while connection is still active?", "Chatterbox", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+            {
+                _connection?.Dispose();
+            }
+            else
+            {
+                args.Cancel = true;
+            }
         }
 
     }

@@ -16,9 +16,8 @@ namespace Chatterbox.Controls
                 CbMessageCreator.Internal => (BitmapImage)FindResource("ImgHost"),
                 _ => (BitmapImage)FindResource("ImgUnknown")
             };
-            UsernameText.Text = message.Username;
+            UsernameText.Text = message.Username + $" @ {message.Time:t}";
             MessageText.Text = message.Message;
-            TimeText.Text = message.Time.ToString("t");
         }
 
     }

@@ -55,18 +55,17 @@ namespace Chatterbox.Server
             Logger.Log($"A client connected from {endpoint}.");
             listener.BeginAcceptTcpClient(HandleClient, listener);
             var connection = new TcpConnection(client);
-            connection.OnMessageReceived += (sender, args) =>
+            connection.OnMessageReceived += async (sender, args) =>
             {
                 Logger.Log($"{args.Message.Username}: {args.Message.Message}");
                 foreach (var peer in Peers)
-                    peer.Send(args.Message);
+                    await peer.SendAsync(args.Message);
             };
             connection.OnConnectionLost += (sender, args) =>
             {
                 connection.Dispose();
                 Peers.Remove(connection);
-                Logger.Log($"A client disconnected from {endpoint}.");
-
+                Logger.Log($"A client disconnected from {endpoint}. Reason: {args.Reason}");
             };
             Peers.Add(connection);
         }

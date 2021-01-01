@@ -14,6 +14,7 @@ namespace Chatterbox.Core
         
         public string Username { get; set; }
         public string Message { get; set; }
+        public bool RequestDisconnect { get; set; }
         public CbMessageCreator Creator { get; set; } = CbMessageCreator.Unknown;
         public DateTime Time { get; set; } = DateTime.Now;
 
