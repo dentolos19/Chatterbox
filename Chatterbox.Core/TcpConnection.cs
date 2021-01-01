@@ -57,8 +57,10 @@ namespace Chatterbox.Core
                 }
                 catch (Exception error)
                 {
+                    if (_isConnectionLost)
+                        return;
                     _isConnectionLost = true;
-                    OnConnectionLost?.Invoke(this, new ConnectionLostEventArgs { Reason = IsDisposed ? "Disconnected by user." : error.Message });
+                    OnConnectionLost?.Invoke(this, new ConnectionLostEventArgs { Reason = IsDisposed ? "Disconnected was disposed." : error.Message });
                     return;
                 }
                 if (string.IsNullOrEmpty(received))

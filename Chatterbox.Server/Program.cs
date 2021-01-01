@@ -1,5 +1,5 @@
 ﻿using System;
-using System.IO;
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading.Tasks;
@@ -13,6 +13,7 @@ namespace Chatterbox.Server
     {
 
         private static CbLogger Logger { get; } = new CbLogger();
+        private static List<TcpConnection> Peers { get; } = new List<TcpConnection>();
 
         private static ushort Port { get; set; } = 8000;
 
@@ -51,33 +52,23 @@ namespace Chatterbox.Server
                 return;
             var client = listener.EndAcceptTcpClient(result);
             var endpoint = client.Client.RemoteEndPoint;
-            Logger.Log($"A client connected with IP of {endpoint}.");
+            Logger.Log($"A client connected from {endpoint}.");
             listener.BeginAcceptTcpClient(HandleClient, listener);
-            var reader = new StreamReader(client.GetStream());
-            while (client.Connected)
+            var connection = new TcpConnection(client);
+            connection.OnMessageReceived += (sender, args) =>
             {
-                try
-                {
-                    if (client?.Client == null || !client.Client.Connected)
-                        break;
-                    if (!client.Client.Poll(0, SelectMode.SelectRead))
-                        continue;
-                    var buffer = new byte[1];
-                    if (client.Client.Receive(buffer, SocketFlags.Peek) == 0)
-                        break;
-                }
-                catch
-                {
-                    break;
-                }
-                var received = reader.ReadLine();
-                if (string.IsNullOrEmpty(received))
-                    continue;
-                var parsed = CbMessage.Parse(received);
-                Logger.Log($"{parsed.Username}: {parsed.Content}");
+                Logger.Log($"{args.Message.Username}: {args.Message.Message}");
+                foreach (var peer in Peers)
+                    peer.Send(args.Message);
+            };
+            connection.OnConnectionLost += (sender, args) =>
+            {
+                connection.Dispose();
+                Peers.Remove(connection);
+                Logger.Log($"A client disconnected from {endpoint}.");
 
-            }
-            Logger.Log($"A client disconnected with IP of {endpoint}.");
+            };
+            Peers.Add(connection);
         }
 
     }

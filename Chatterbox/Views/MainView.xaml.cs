@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net.Sockets;
 using System.Windows;
+using Chatterbox.Controls;
 using Chatterbox.Core;
 using Chatterbox.Core.Events;
 
@@ -31,10 +32,20 @@ namespace Chatterbox.Views
                 }
                 catch (Exception error)
                 {
-                    MessageStack.Text += $"Unable to connect to host. Reason: {error.Message}\n";
+                    MessageStack.Items.Add(new MessageItem(new CbMessage
+                    {
+                        Username = "Client",
+                        Message = $"Unable to connect to host. Reason: {error.Message}",
+                        Creator = CbMessageCreator.Internal
+                    }));
                     return;
                 }
-                MessageStack.Text += "Connected to host.\n";
+                MessageStack.Items.Add(new MessageItem(new CbMessage
+                {
+                    Username = "Client",
+                    Message = $"Connected to {client.Client.RemoteEndPoint}.",
+                    Creator = CbMessageCreator.Internal
+                }));
                 _connection = new TcpConnection(client);
                 _connection.OnMessageReceived += ReceiveMessage;
                 _connection.OnConnectionLost += ConnectionLost;
@@ -64,7 +75,13 @@ namespace Chatterbox.Views
 
         private void ReceiveMessage(object sender, MessageReceivedEventArgs args)
         {
-            MessageStack.Text += $"{args.Message.Username}: {args.Message.Content}\n";
+            Dispatcher.Invoke(() =>
+            {
+                var message = args.Message;
+                if (message.Username == UsernameInput.Text)
+                    message.Username += " (You)";
+                MessageStack.Items.Add(new MessageItem(message));
+            });
         }
 
         private void SendMessage(object sender, RoutedEventArgs args)
@@ -72,7 +89,8 @@ namespace Chatterbox.Views
             _connection?.Send(new CbMessage
             {
                 Username = UsernameInput.Text,
-                Content = MessageInput.Text
+                Message = MessageInput.Text,
+                Creator = CbMessageCreator.User
             });
             MessageInput.Text = string.Empty;
         }
@@ -81,7 +99,12 @@ namespace Chatterbox.Views
         {
             Dispatcher.Invoke(() =>
             {
-                MessageStack.Text += $"Disconnected from host. Reason: {args.Reason}\n";
+                MessageStack.Items.Add(new MessageItem(new CbMessage
+                {
+                    Username = "Client",
+                    Message = $"Disconnected from host. Reason: {args.Reason}",
+                    Creator = CbMessageCreator.Internal
+                }));
                 if (_connection != null)
                     Connect(null, null);
             });

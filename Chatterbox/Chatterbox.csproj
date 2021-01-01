@@ -8,11 +8,14 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\Chatterbox.Core\Chatterbox.Core.csproj"/>
+		<ProjectReference Include="..\Chatterbox.Core\Chatterbox.Core.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<Resource Include="Resources\Assets\Icon.png"/>
+		<Resource Include="Resources\Assets\Host.png" />
+		<Resource Include="Resources\Assets\Icon.png" />
+		<Resource Include="Resources\Assets\User.png" />
+		<Resource Include="Resources\Assets\Unknown.png" />
 	</ItemGroup>
 
 </Project>

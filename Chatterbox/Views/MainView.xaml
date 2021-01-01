@@ -34,14 +34,14 @@
                     <TextBox x:Name="PortInput" Grid.Column="4" Text="8000"/>
                     <Button x:Name="ConnectButton" Grid.Column="6" Content="Connect" Click="Connect"/>
                 </Grid>
-                <TextBlock x:Name="MessageStack" Grid.Column="1" Grid.Row="3"/>
+                <ListBox x:Name="MessageStack" Grid.Column="1" Grid.Row="3"/>
                 <Grid Grid.Column="1" Grid.Row="5">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="5"/>
                         <ColumnDefinition Width="100"/>
                     </Grid.ColumnDefinitions>
-                    <TextBox x:Name="MessageInput" Grid.Column="0" Text="Hello"/>
+                    <TextBox x:Name="MessageInput" Grid.Column="0"/>
                     <Button x:Name="SendButton" Grid.Column="2" Content="Send" Click="SendMessage"/>
                 </Grid>
             </Grid>

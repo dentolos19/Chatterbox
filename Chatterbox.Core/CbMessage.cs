@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
@@ -10,9 +11,11 @@ namespace Chatterbox.Core
     {
 
         private static readonly XmlSerializer Serializer = new XmlSerializer(typeof(CbMessage));
-
+        
         public string Username { get; set; }
-        public string Content { get; set; }
+        public string Message { get; set; }
+        public CbMessageCreator Creator { get; set; } = CbMessageCreator.Unknown;
+        public DateTime Time { get; set; } = DateTime.Now;
 
         public static CbMessage Parse(string data)
         {
