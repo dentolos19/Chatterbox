@@ -27,12 +27,12 @@
                 <ColumnDefinition Width="5"/>
                 <ColumnDefinition Width="100"/>
             </Grid.ColumnDefinitions>
-            <TextBox x:Name="UsernameInput" Grid.Column="0" Text="Unknown User"/>
+            <TextBox x:Name="UsernameInput" Grid.Column="0" Text="User"/>
             <TextBox x:Name="IpInput" Grid.Column="2" Text="127.0.0.1"/>
             <TextBox x:Name="PortInput" Grid.Column="4" Text="8000"/>
             <Button x:Name="ConnectButton" Grid.Column="6" Content="Connect" Click="Connect"/>
         </Grid>
-        <ListBox x:Name="MessageStack" Grid.Column="1" Grid.Row="3"/>
+        <ListBox x:Name="MessageStack" Grid.Column="1" Grid.Row="3" HorizontalContentAlignment="Stretch"/>
         <Grid Grid.Column="1" Grid.Row="5">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>

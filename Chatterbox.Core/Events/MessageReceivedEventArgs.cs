@@ -4,7 +4,7 @@
     public class MessageReceivedEventArgs
     {
 
-        public CbMessage Message { get; set; }
+        public ChatMessage Message { get; set; }
 
     }
 

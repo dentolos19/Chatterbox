@@ -1,4 +1,5 @@
-﻿using System.Windows.Media.Imaging;
+﻿using System.Windows;
+using System.Windows.Media.Imaging;
 using Chatterbox.Core;
 
 namespace Chatterbox.Controls
@@ -7,17 +8,30 @@ namespace Chatterbox.Controls
     public partial class MessageItem
     {
 
-        public MessageItem(CbMessage message)
+        private readonly ChatMessage _originalMessage;
+
+        public MessageItem(ChatMessage message)
         {
             InitializeComponent();
-            ProfileIcon.Source = message.Creator switch
+            _originalMessage = message;
+            ProfileIcon.Source = _originalMessage.Sender switch
             {
-                CbMessageCreator.User => (BitmapImage)FindResource("ImgUser"),
-                CbMessageCreator.Internal => (BitmapImage)FindResource("ImgHost"),
+                ChatSender.User => (BitmapImage)FindResource("ImgUser"),
+                ChatSender.Internal => (BitmapImage)FindResource("ImgHost"),
                 _ => (BitmapImage)FindResource("ImgUnknown")
             };
-            UsernameText.Text = message.Username + $" @ {message.Time:t}";
-            MessageText.Text = message.Message;
+            UsernameText.Text = _originalMessage.Username + $" @ {_originalMessage.Time:t}";
+            MessageText.Text = _originalMessage.Message;
+        }
+
+        private void CopyUsername(object sender, RoutedEventArgs args)
+        {
+            Clipboard.SetText(_originalMessage.Username);
+        }
+
+        private void CopyMessage(object sender, RoutedEventArgs args)
+        {
+            Clipboard.SetText(_originalMessage.Message);
         }
 
     }

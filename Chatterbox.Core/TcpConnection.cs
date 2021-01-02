@@ -17,12 +17,10 @@ namespace Chatterbox.Core
         private readonly BackgroundWorker _receiver;
 
         private bool _isConnectionLost;
+        private bool _isDisposed;
 
         public event EventHandler<MessageReceivedEventArgs> OnMessageReceived;
         public event EventHandler<ConnectionLostEventArgs> OnConnectionLost;
-
-        public bool IsConnected { get { try { if (_client?.Client == null || !_client.Client.Connected) return false; if (!_client.Client.Poll(0, SelectMode.SelectRead)) return true; var buff = new byte[1]; return _client.Client.Receive(buff, SocketFlags.Peek) != 0; } catch { return false; } } }
-        public bool IsDisposed { get; private set; }
 
         public TcpConnection(TcpClient client)
         {
@@ -48,13 +46,13 @@ namespace Chatterbox.Core
                     if (_isConnectionLost)
                         break;
                     _isConnectionLost = true;
-                    OnConnectionLost?.Invoke(this, new ConnectionLostEventArgs { Reason = IsDisposed ? "Disconnected by user." : error.Message });
+                    OnConnectionLost?.Invoke(this, new ConnectionLostEventArgs { Reason = _isDisposed ? "Disconnected by user." : error.Message });
                     break;
                 }
                 if (string.IsNullOrEmpty(received))
                     continue;
-                var parsed = CbMessage.Parse(received);
-                if (parsed.RequestDisconnect)
+                var parsed = ChatMessage.Parse(received);
+                if (parsed.Command == ChatCommand.Disconnect)
                 {
                     if (_isConnectionLost)
                         break;
@@ -66,18 +64,18 @@ namespace Chatterbox.Core
             }
         }
 
-        public async Task SendAsync(CbMessage message)
+        public async Task SendAsync(ChatMessage message)
         {
-            if (IsDisposed)
+            if (_isDisposed)
                 return;
             await _writer.WriteLineAsync(message.ToString());
         }
 
         public void Dispose()
         {
-            if (IsDisposed)
+            if (_isDisposed)
                 return;
-            SendAsync(new CbMessage { RequestDisconnect = true }).GetAwaiter().GetResult();
+            SendAsync(new ChatMessage { Command = ChatCommand.Disconnect }).GetAwaiter().GetResult();
             _reader.Dispose();
             _writer.Dispose();
             if (_receiver.IsBusy)
@@ -86,7 +84,7 @@ namespace Chatterbox.Core
             if (_client.Connected)
                 _client.GetStream().Close();
             _client.Close();
-            IsDisposed = true;
+            _isDisposed = true;
         }
 
     }

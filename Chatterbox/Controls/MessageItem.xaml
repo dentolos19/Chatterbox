@@ -11,6 +11,12 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
+        <Grid.ContextMenu>
+            <ContextMenu>
+                <MenuItem Header="Copy Username" Click="CopyUsername"/>
+                <MenuItem Header="Copy Message" Click="CopyMessage"/>
+            </ContextMenu>
+        </Grid.ContextMenu>
         <Image x:Name="ProfileIcon" Grid.Column="0" Grid.Row="0" Grid.RowSpan="2"/>
         <TextBlock x:Name="UsernameText" Grid.Column="2" Grid.Row="0"/>
         <TextBlock x:Name="MessageText" Grid.Column="2" Grid.Row="1"/>

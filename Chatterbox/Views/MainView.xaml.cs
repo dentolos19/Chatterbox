@@ -12,6 +12,7 @@ namespace Chatterbox.Views
     public partial class MainView
     {
 
+        private Guid _userId;
         private TcpConnection _connection;
 
         public MainView()
@@ -24,31 +25,38 @@ namespace Chatterbox.Views
             SendButton.IsEnabled = false;
         }
 
-        private void Connect(object sender, RoutedEventArgs args)
+        private async void Connect(object sender, RoutedEventArgs args)
         {
             if (_connection == null)
             {
+                ConnectButton.IsEnabled = false;
+                ConnectButton.Content = "Connecting";
+
                 var client = new TcpClient();
                 try
                 {
-                    client.Connect(IpInput.Text, int.Parse(PortInput.Text));
+                    await client.ConnectAsync(IpInput.Text, int.Parse(PortInput.Text));
                 }
                 catch (Exception error)
                 {
-                    MessageStack.Items.Add(new MessageItem(new CbMessage
+                    ConnectButton.IsEnabled = true;
+                    ConnectButton.Content = "Connect";
+
+                    MessageStack.Items.Add(new MessageItem(new ChatMessage
                     {
                         Username = "Chatterbox",
                         Message = $"Unable to connect to host. Reason: {error.Message}",
-                        Creator = CbMessageCreator.Internal
+                        Sender = ChatSender.Internal
                     }));
                     return;
                 }
-                MessageStack.Items.Add(new MessageItem(new CbMessage
+                MessageStack.Items.Add(new MessageItem(new ChatMessage
                 {
                     Username = "Chatterbox",
                     Message = $"Connected to {client.Client.RemoteEndPoint}.",
-                    Creator = CbMessageCreator.Internal
+                    Sender = ChatSender.Internal
                 }));
+                _userId = Guid.NewGuid();
                 _connection = new TcpConnection(client);
                 _connection.OnMessageReceived += ReceiveMessage;
                 _connection.OnConnectionLost += ConnectionLost;
@@ -56,6 +64,7 @@ namespace Chatterbox.Views
                 UsernameInput.IsEnabled = false;
                 IpInput.IsEnabled = false;
                 PortInput.IsEnabled = false;
+                ConnectButton.IsEnabled = true;
                 ConnectButton.IsDefault = false;
                 ConnectButton.IsCancel = true;
                 ConnectButton.Content = "Disconnect";
@@ -63,6 +72,8 @@ namespace Chatterbox.Views
                 MessageInput.IsEnabled = true;
                 SendButton.IsEnabled = true;
                 SendButton.IsDefault = true;
+
+                MessageInput.Focus();
             }
             else
             {
@@ -77,7 +88,6 @@ namespace Chatterbox.Views
                 ConnectButton.Content = "Connect";
 
                 MessageInput.IsEnabled = false;
-                MessageInput.Focus();
                 SendButton.IsEnabled = false;
                 SendButton.IsDefault = false;
             }
@@ -88,7 +98,7 @@ namespace Chatterbox.Views
             Dispatcher.Invoke(() =>
             {
                 var message = args.Message;
-                if (message.Username == UsernameInput.Text)
+                if (message.UserId.Equals(_userId))
                     message.Username += " (You)";
                 MessageStack.Items.Add(new MessageItem(message));
             });
@@ -96,11 +106,12 @@ namespace Chatterbox.Views
 
         private void SendMessage(object sender, RoutedEventArgs args)
         {
-            _connection?.SendAsync(new CbMessage
+            _connection?.SendAsync(new ChatMessage
             {
+                UserId = _userId,
                 Username = UsernameInput.Text,
                 Message = MessageInput.Text,
-                Creator = CbMessageCreator.User
+                Sender = ChatSender.User
             });
             MessageInput.Text = string.Empty;
         }
@@ -109,11 +120,11 @@ namespace Chatterbox.Views
         {
             Dispatcher.Invoke(() =>
             {
-                MessageStack.Items.Add(new MessageItem(new CbMessage
+                MessageStack.Items.Add(new MessageItem(new ChatMessage
                 {
                     Username = "Chatterbox",
                     Message = $"Disconnected from host. Reason: {args.Reason}",
-                    Creator = CbMessageCreator.Internal
+                    Sender = ChatSender.Internal
                 }));
                 if (_connection != null)
                     Connect(null, null);

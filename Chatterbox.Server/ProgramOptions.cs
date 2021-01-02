@@ -6,8 +6,7 @@ namespace Chatterbox.Server
     public class ProgramOptions
     {
 
-        [Option('p', "port")]
-        public int Port { get; private set; }
+        [Option('p', "port")] public int Port { get; private set; } = 8000;
 
     }
 
