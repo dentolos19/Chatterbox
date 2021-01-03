@@ -7,21 +7,23 @@ namespace Chatterbox.Core
     public class ChatMessage
     {
 
-        public Guid UserId { get; set; }
+        public Guid Id { get; set; }
         public string Username { get; set; }
-        public string Message { get; set; }
+        public string Content { get; set; }
         public ChatCommand Command { get; set; } = ChatCommand.None;
         public ChatSender Sender { get; set; } = ChatSender.Unknown;
         public DateTime Time { get; set; } = DateTime.Now;
 
         public static ChatMessage Parse(string data)
         {
-            return JsonSerializer.Deserialize<ChatMessage>(data);
+            ChatEncryption.DecryptData(data, ChatEncryption.Key, out var json);
+            return JsonSerializer.Deserialize<ChatMessage>(json);
         }
 
         public override string ToString()
         {
-            return JsonSerializer.Serialize(this);
+            var json = JsonSerializer.Serialize(this);
+            return ChatEncryption.EncryptData(json, ChatEncryption.Key);
         }
 
     }

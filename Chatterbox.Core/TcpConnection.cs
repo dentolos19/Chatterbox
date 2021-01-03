@@ -76,8 +76,8 @@ namespace Chatterbox.Core
             if (_isDisposed)
                 return;
             SendAsync(new ChatMessage { Command = ChatCommand.Disconnect }).GetAwaiter().GetResult();
-            _reader.Dispose();
-            _writer.Dispose();
+            _reader.Close();
+            _writer.Close();
             if (_receiver.IsBusy)
                 _receiver.CancelAsync();
             _receiver.Dispose();

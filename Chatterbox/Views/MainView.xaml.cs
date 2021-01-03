@@ -42,20 +42,20 @@ namespace Chatterbox.Views
                     ConnectButton.IsEnabled = true;
                     ConnectButton.Content = "Connect";
 
-                    MessageStack.Items.Add(new MessageItem(new ChatMessage
+                    DisplayMessage(new ChatMessage
                     {
                         Username = "Chatterbox",
-                        Message = $"Unable to connect to host. Reason: {error.Message}",
+                        Content = $"Unable to connect to host. Reason: {error.Message}",
                         Sender = ChatSender.Internal
-                    }));
+                    });
                     return;
                 }
-                MessageStack.Items.Add(new MessageItem(new ChatMessage
+                DisplayMessage(new ChatMessage
                 {
                     Username = "Chatterbox",
-                    Message = $"Connected to {client.Client.RemoteEndPoint}.",
+                    Content = $"Connected to {client.Client.RemoteEndPoint}.",
                     Sender = ChatSender.Internal
-                }));
+                });
                 _userId = Guid.NewGuid();
                 _connection = new TcpConnection(client);
                 _connection.OnMessageReceived += ReceiveMessage;
@@ -98,9 +98,9 @@ namespace Chatterbox.Views
             Dispatcher.Invoke(() =>
             {
                 var message = args.Message;
-                if (message.UserId.Equals(_userId))
+                if (message.Id.Equals(_userId))
                     message.Username += " (You)";
-                MessageStack.Items.Add(new MessageItem(message));
+                DisplayMessage(message);
             });
         }
 
@@ -108,9 +108,9 @@ namespace Chatterbox.Views
         {
             _connection?.SendAsync(new ChatMessage
             {
-                UserId = _userId,
+                Id = _userId,
                 Username = UsernameInput.Text,
-                Message = MessageInput.Text,
+                Content = MessageInput.Text,
                 Sender = ChatSender.User
             });
             MessageInput.Text = string.Empty;
@@ -120,12 +120,12 @@ namespace Chatterbox.Views
         {
             Dispatcher.Invoke(() =>
             {
-                MessageStack.Items.Add(new MessageItem(new ChatMessage
+                DisplayMessage(new ChatMessage
                 {
                     Username = "Chatterbox",
-                    Message = $"Disconnected from host. Reason: {args.Reason}",
+                    Content = $"Disconnected from host. Reason: {args.Reason}",
                     Sender = ChatSender.Internal
-                }));
+                });
                 if (_connection != null)
                     Connect(null, null);
             });
@@ -143,6 +143,11 @@ namespace Chatterbox.Views
             {
                 args.Cancel = true;
             }
+        }
+
+        public void DisplayMessage(ChatMessage message)
+        {
+            MessageStack.Items.Add(new MessageItem(message));
         }
 
     }

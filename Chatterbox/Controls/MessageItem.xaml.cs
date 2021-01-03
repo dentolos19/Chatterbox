@@ -21,7 +21,7 @@ namespace Chatterbox.Controls
                 _ => (BitmapImage)FindResource("ImgUnknown")
             };
             UsernameText.Text = _originalMessage.Username + $" @ {_originalMessage.Time:t}";
-            MessageText.Text = _originalMessage.Message;
+            MessageText.Text = _originalMessage.Content;
         }
 
         private void CopyUsername(object sender, RoutedEventArgs args)
@@ -31,7 +31,7 @@ namespace Chatterbox.Controls
 
         private void CopyMessage(object sender, RoutedEventArgs args)
         {
-            Clipboard.SetText(_originalMessage.Message);
+            Clipboard.SetText(_originalMessage.Content);
         }
 
     }

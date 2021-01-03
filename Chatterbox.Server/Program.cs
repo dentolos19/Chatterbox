@@ -61,7 +61,7 @@ namespace Chatterbox.Server
             var connection = new TcpConnection(client);
             connection.OnMessageReceived += async (_, args) =>
             {
-                Logger.Log($"{args.Message.Username}: {args.Message.Message}");
+                Logger.Log($"{args.Message.Username}: {args.Message.Content}");
                 foreach (var peer in Peers)
                     await peer.SendAsync(args.Message);
             };
