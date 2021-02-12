@@ -10,8 +10,8 @@
   <a href="https://dotnet.microsoft.com">
     <img src="https://img.shields.io/badge/Powered%20By-.NET-blue?logo=microsoft&style=for-the-badge">
   </a>
-  <a href="https://visualstudio.microsoft.com">
-    <img src="https://img.shields.io/badge/Made%20With-Visual%20Studio-blue?logo=visual-studio&style=for-the-badge">
+  <a href="https://www.jetbrains.com/rider">
+    <img src="https://img.shields.io/badge/Made%20With-Rider-blue?logo=jetbrains&style=for-the-badge">
   </a>
 </p>
 

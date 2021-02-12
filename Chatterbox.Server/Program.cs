@@ -26,11 +26,6 @@ namespace Chatterbox.Server
                 Directory.CreateDirectory(LogsPath);
             Logger = new Logger(Path.Combine(LogsPath, $"{DateTime.Now:yyyyMMdd_HHmmss}.log"));
             Peers = new List<TcpConnection>();
-            MainAsync(args).GetAwaiter().GetResult();
-        }
-
-        private static async Task MainAsync(string[] args)
-        {
             Parser.Default.ParseArguments<ProgramOptions>(args).WithParsed(options =>
             {
                 if (options.Port < 1024 || options.Port > 49151)
@@ -43,6 +38,11 @@ namespace Chatterbox.Server
                     Port = (ushort)options.Port;
                 }
             });
+            MainAsync().GetAwaiter().GetResult();
+        }
+
+        private static async Task MainAsync()
+        {
             var listener = new TcpListener(IPAddress.Any, Port);
             listener.Start();
             Logger.Log($"Started hosting at port {Port}.");
