@@ -10,17 +10,14 @@ namespace Chatterbox.Core
 
     public class TcpConnection : IDisposable
     {
-        
+
         private readonly TcpClient _client;
         private readonly StreamReader _reader;
-        private readonly StreamWriter _writer;
         private readonly BackgroundWorker _receiver;
+        private readonly StreamWriter _writer;
 
         private bool _isConnectionLost;
         private bool _isDisposed;
-
-        public event EventHandler<MessageReceivedEventArgs> OnMessageReceived;
-        public event EventHandler<ConnectionLostEventArgs> OnConnectionLost;
 
         public TcpConnection(TcpClient client)
         {
@@ -32,11 +29,30 @@ namespace Chatterbox.Core
             _receiver.RunWorkerAsync();
         }
 
-        private void ReceiveData(object sender, DoWorkEventArgs args)
+        public void Dispose()
+        {
+            if (_isDisposed)
+                return;
+            SendAsync(new ChatMessage { Command = ChatCommand.Disconnect }).GetAwaiter().GetResult();
+            _reader.Close();
+            _writer.Close();
+            if (_receiver.IsBusy)
+                _receiver.CancelAsync();
+            _receiver.Dispose();
+            if (_client.Connected)
+                _client.GetStream().Close();
+            _client.Close();
+            _isDisposed = true;
+        }
+
+        public event EventHandler<MessageReceivedEventArgs> OnMessageReceived;
+        public event EventHandler<ConnectionLostEventArgs> OnConnectionLost;
+
+        private void ReceiveData(object? sender, DoWorkEventArgs args)
         {
             while (_client.Connected)
             {
-                string received;
+                string? received;
                 try
                 {
                     received = _reader.ReadLine();
@@ -69,22 +85,6 @@ namespace Chatterbox.Core
             if (_isDisposed)
                 return;
             await _writer.WriteLineAsync(message.ToString());
-        }
-
-        public void Dispose()
-        {
-            if (_isDisposed)
-                return;
-            SendAsync(new ChatMessage { Command = ChatCommand.Disconnect }).GetAwaiter().GetResult();
-            _reader.Close();
-            _writer.Close();
-            if (_receiver.IsBusy)
-                _receiver.CancelAsync();
-            _receiver.Dispose();
-            if (_client.Connected)
-                _client.GetStream().Close();
-            _client.Close();
-            _isDisposed = true;
         }
 
     }

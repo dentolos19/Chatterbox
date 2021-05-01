@@ -47,7 +47,7 @@ namespace Chatterbox.Server
             listener.Start();
             Logger.Log($"Started hosting at port {Port}.");
             listener.BeginAcceptTcpClient(HandleClient, listener);
-            await Task.Delay(-1); // waits until user manually closes this program
+            await Task.Delay(-1);
         }
 
         private static void HandleClient(IAsyncResult result)

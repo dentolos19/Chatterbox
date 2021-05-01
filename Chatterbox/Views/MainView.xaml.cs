@@ -12,8 +12,8 @@ namespace Chatterbox.Views
     public partial class MainView
     {
 
+        private TcpConnection? _connection;
         private Guid _userId;
-        private TcpConnection _connection;
 
         public MainView()
         {
@@ -93,7 +93,7 @@ namespace Chatterbox.Views
             }
         }
 
-        private void ReceiveMessage(object sender, MessageReceivedEventArgs args)
+        private void ReceiveMessage(object? sender, MessageReceivedEventArgs args)
         {
             Dispatcher.Invoke(() =>
             {
@@ -116,7 +116,7 @@ namespace Chatterbox.Views
             MessageInput.Text = string.Empty;
         }
 
-        private void ConnectionLost(object sender, ConnectionLostEventArgs args)
+        private void ConnectionLost(object? sender, ConnectionLostEventArgs args)
         {
             Dispatcher.Invoke(() =>
             {
@@ -127,7 +127,7 @@ namespace Chatterbox.Views
                     Sender = ChatSender.Internal
                 });
                 if (_connection != null)
-                    Connect(null, null);
+                    Connect(null!, null!);
             });
         }
 
@@ -136,13 +136,9 @@ namespace Chatterbox.Views
             if (_connection == null)
                 return;
             if (MessageBox.Show("Are you sure that you want to close this app while connection is still active?", "Chatterbox", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
-            {
                 _connection?.Dispose();
-            }
             else
-            {
                 args.Cancel = true;
-            }
         }
 
         public void DisplayMessage(ChatMessage message)

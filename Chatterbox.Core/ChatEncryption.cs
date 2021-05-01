@@ -13,7 +13,7 @@ namespace Chatterbox.Core
         private static string FixKeyLength(string key)
         {
             if (string.IsNullOrEmpty(key) || key.Length > 16)
-                return null;
+                throw new ArgumentOutOfRangeException(nameof(key));
             if (key.Length == 16)
                 return key;
             var charsNeeded = 16 - key.Length;
@@ -38,7 +38,7 @@ namespace Chatterbox.Core
             return Convert.ToBase64String(result, 0, result.Length);
         }
 
-        public static bool DecryptData(string data, string key, out string output)
+        public static bool DecryptData(string data, string key, out string? output)
         {
             key = FixKeyLength(key);
             try

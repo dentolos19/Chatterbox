@@ -8,8 +8,8 @@ namespace Chatterbox.Core
     {
 
         public Guid Id { get; set; }
-        public string Username { get; set; }
-        public string Content { get; set; }
+        public string? Username { get; set; }
+        public string? Content { get; set; }
         public ChatCommand Command { get; set; } = ChatCommand.None;
         public ChatSender Sender { get; set; } = ChatSender.Unknown;
         public DateTime Time { get; set; } = DateTime.Now;
@@ -17,7 +17,7 @@ namespace Chatterbox.Core
         public static ChatMessage Parse(string data)
         {
             ChatEncryption.DecryptData(data, ChatEncryption.Key, out var json);
-            return JsonSerializer.Deserialize<ChatMessage>(json);
+            return JsonSerializer.Deserialize<ChatMessage>(json)!;
         }
 
         public override string ToString()
