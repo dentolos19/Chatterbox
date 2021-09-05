@@ -12,7 +12,7 @@ namespace Chatterbox.Core
         public Logger(string? outputPath = null)
         {
             if (!string.IsNullOrEmpty(outputPath))
-                _writer = new StreamWriter(outputPath) { AutoFlush = true };
+                _writer = new StreamWriter(outputPath) {   AutoFlush = true };
         }
 
         public void Dispose()

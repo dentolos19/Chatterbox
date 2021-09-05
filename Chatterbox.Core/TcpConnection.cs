@@ -33,7 +33,10 @@ namespace Chatterbox.Core
         {
             if (_isDisposed)
                 return;
-            SendAsync(new ChatMessage { Command = ChatCommand.Disconnect }).GetAwaiter().GetResult();
+            SendAsync(new ChatMessage
+            {
+                Command = ChatCommand.Disconnect
+            }).GetAwaiter().GetResult();
             _reader.Close();
             _writer.Close();
             if (_receiver.IsBusy)
@@ -62,7 +65,10 @@ namespace Chatterbox.Core
                     if (_isConnectionLost)
                         break;
                     _isConnectionLost = true;
-                    OnConnectionLost?.Invoke(this, new ConnectionLostEventArgs { Reason = _isDisposed ? "Disconnected by user." : error.Message });
+                    OnConnectionLost?.Invoke(this, new ConnectionLostEventArgs
+                    {
+                        Reason = _isDisposed ? "Disconnected by user." : error.Message
+                    });
                     break;
                 }
                 if (string.IsNullOrEmpty(received))
@@ -73,10 +79,16 @@ namespace Chatterbox.Core
                     if (_isConnectionLost)
                         break;
                     _isConnectionLost = true;
-                    OnConnectionLost?.Invoke(this, new ConnectionLostEventArgs { Reason = "Disconnected by user." });
+                    OnConnectionLost?.Invoke(this, new ConnectionLostEventArgs
+                    {
+                        Reason = "Disconnected by user."
+                    });
                     break;
                 }
-                OnMessageReceived?.Invoke(this, new MessageReceivedEventArgs { Message = parsed });
+                OnMessageReceived?.Invoke(this, new MessageReceivedEventArgs
+                {
+                    Message = parsed
+                });
             }
         }
 

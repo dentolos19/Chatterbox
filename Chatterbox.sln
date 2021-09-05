@@ -7,7 +7,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Chatterbox.Server", "Chatte
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Chatterbox.Core", "Chatterbox.Core\Chatterbox.Core.csproj", "{2919F24A-ACE5-4DF2-A1D1-76C9893AE1A3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chatterbox", "Chatterbox\Chatterbox.csproj", "{E60298D7-EAE4-4151-B92A-AFA1CFB4B20D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Chatterbox", "Chatterbox\Chatterbox.csproj", "{E60298D7-EAE4-4151-B92A-AFA1CFB4B20D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Repository Files", "Repository Files", "{330BCCCA-BB46-4195-89E8-350EC60ACABC}"
+	ProjectSection(SolutionItems) = preProject
+		LICENSE = LICENSE
+		README.md = README.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
