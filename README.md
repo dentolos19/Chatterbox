@@ -8,7 +8,3 @@ Chatterbox is a simple TCP/IP-based chat communication app!
 ## Screenshots
 
 ![](./.github/screenshots/0.png)
-
-## Usage
-
-This project is not intended for distribution.
