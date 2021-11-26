@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 
 namespace Chatterbox.Core;
@@ -14,18 +15,12 @@ public class Logger : IDisposable
             _writer = new StreamWriter(outputPath) { AutoFlush = true };
     }
 
-    public void Log(string message, LoggerStatus status = LoggerStatus.Information)
+    public void Log(string message, LoggerStatus status = LoggerStatus.Info)
     {
-        var statusText = status switch
-        {
-            LoggerStatus.Information => "INFO",
-            LoggerStatus.Warning => "WARNING",
-            LoggerStatus.Error => "ERROR",
-            _ => "UNKNOWN"
-        };
-        var logMessage = $"[{DateTime.Now:yyyy-MM-dd @ HH:mm:ss} * {statusText}] {message}";
-        Console.WriteLine(logMessage);
-        _writer?.WriteLine(logMessage);
+        var log = $"[{DateTime.Now:yyyy-MM-dd @ HH:mm:ss} * {status}] {message}";
+        Debug.WriteLine(log);
+        Console.WriteLine(log);
+        _writer?.WriteLine(log);
     }
 
     public void Dispose()

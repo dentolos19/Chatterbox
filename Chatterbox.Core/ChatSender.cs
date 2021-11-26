@@ -1,3 +1,3 @@
 ﻿namespace Chatterbox.Core;
 
-public enum ChatSender { Unknown, User, Internal }
+public enum ChatSender { Unknown, User, Client, Server }

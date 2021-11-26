@@ -16,11 +16,11 @@ public record MessageItemModel
         Image = message.Sender switch
         {
             ChatSender.User => (BitmapImage)Application.Current.FindResource("ImgUser"),
-            ChatSender.Internal => (BitmapImage)Application.Current.FindResource("ImgHost"),
+            ChatSender.Client => (BitmapImage)Application.Current.FindResource("ImgHost"),
             _ => (BitmapImage)Application.Current.FindResource("ImgUnknown")
         };
-        Name = message.Name + $" @ {message.Time:t}";
-        Text = message.Text;
+        Name = message.Username + $" @ {message.Time:t}";
+        Text = message.Message;
     }
 
 }

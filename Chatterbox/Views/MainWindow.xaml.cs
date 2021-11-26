@@ -43,17 +43,17 @@ public partial class MainWindow
 
                 DisplayMessage(new ChatMessage
                 {
-                    Name = "Chatterbox",
-                    Text = $"Unable to connect to host. Reason: {error.Message}",
-                    Sender = ChatSender.Internal
+                    Username = "Chatterbox",
+                    Message = $"Unable to connect to host. Reason: {error.Message}",
+                    Sender = ChatSender.Client
                 });
                 return;
             }
             DisplayMessage(new ChatMessage
             {
-                Name = "Chatterbox",
-                Text = $"Connected to {client.Client.RemoteEndPoint}.",
-                Sender = ChatSender.Internal
+                Username = "Chatterbox",
+                Message = $"Connected to {client.Client.RemoteEndPoint}.",
+                Sender = ChatSender.Client
             });
             _userId = Guid.NewGuid();
             _tcpConnection = new TcpConnection(client);
@@ -97,8 +97,8 @@ public partial class MainWindow
         Dispatcher.Invoke(() =>
         {
             var message = args.Message;
-            if (message.Id.Equals(_userId))
-                message.Name += " (You)";
+            if (message.UserId.Equals(_userId))
+                message.Username += " (You)";
             DisplayMessage(message);
         });
     }
@@ -107,9 +107,9 @@ public partial class MainWindow
     {
         _tcpConnection?.SendAsync(new ChatMessage
         {
-            Id = _userId,
-            Name = UsernameInput.Text,
-            Text = MessageInput.Text,
+            UserId = _userId,
+            Username = UsernameInput.Text,
+            Message = MessageInput.Text,
             Sender = ChatSender.User
         });
         MessageInput.Text = string.Empty;
@@ -121,9 +121,9 @@ public partial class MainWindow
         {
             DisplayMessage(new ChatMessage
             {
-                Name = "Chatterbox",
-                Text = $"Disconnected from host. Reason: {args.Reason}",
-                Sender = ChatSender.Internal
+                Username = "Chatterbox",
+                Message = $"Disconnected from host. Reason: {args.Reason}",
+                Sender = ChatSender.Client
             });
             if (_tcpConnection != null)
                 Connect(null!, null!);

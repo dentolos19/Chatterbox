@@ -14,63 +14,76 @@ public static class Program
 
     private static readonly string LogsPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "logs");
 
+    private static string ServerName { get; set; }
+    private static int ServerPort { get; set; }
     private static Logger Logger { get; set; }
-    private static List<TcpConnection> Peers { get; set; }
-    private static ushort Port { get; set; }
+
+    private static List<TcpConnection> ConnectedPeers { get; } = new();
 
     private static void Main(string[] args)
     {
-        AppDomain.CurrentDomain.ProcessExit += delegate { Logger.Dispose(); };
-        if (!Directory.Exists(LogsPath))
+        if (!Directory.Exists(LogsPath)) // creates a new directory for logs; if it doesn't exist
             Directory.CreateDirectory(LogsPath);
-        Logger = new Logger(Path.Combine(LogsPath, $"{DateTime.Now:yyyyMMdd_HHmmss}.log"));
-        Peers = new List<TcpConnection>();
-        Parser.Default.ParseArguments<ProgramOptions>(args).WithParsed(options =>
+        Logger = new Logger(Path.Combine(LogsPath, $"{DateTime.Now:yyyyMMdd_HHmmss}.log")); // starts
+        Parser.Default.ParseArguments<ProgramOptions>(args).WithParsed(options => // parses arguments
         {
             if (options.Port is < 1024 or > 49151)
             {
-                Port = (ushort)new ProgramOptions().Port;
                 Logger.Log("Port cannot be lower than 1024 or greater than 49151.");
+                return;
             }
-            else
-            {
-                Port = (ushort)options.Port;
-            }
+            ServerName = options.Name;
+            ServerPort = options.Port;
         });
+        AppDomain.CurrentDomain.ProcessExit += delegate { Logger.Dispose(); };
         MainAsync().GetAwaiter().GetResult();
     }
 
     private static async Task MainAsync()
     {
-        var listener = new TcpListener(IPAddress.Any, Port);
-        listener.Start();
-        Logger.Log($"Started hosting at port {Port}.");
-        listener.BeginAcceptTcpClient(HandleClient, listener);
+        var tcpListener = new TcpListener(IPAddress.Any, ServerPort);
+        tcpListener.Start(); // starts listening for new connecting clients
+        Logger.Log($"Started hosting at port {ServerPort}.");
+        tcpListener.BeginAcceptTcpClient(HandleNewClient, tcpListener); // accepts any new connecting clients
         await Task.Delay(-1);
     }
 
-    private static void HandleClient(IAsyncResult result)
+    private static async void HandleNewClient(IAsyncResult result)
     {
-        if (result.AsyncState is not TcpListener listener)
+        if (result.AsyncState is not TcpListener tcpListener)
             return;
-        var client = listener.EndAcceptTcpClient(result);
-        var endpoint = client.Client.RemoteEndPoint;
-        Logger.Log($"A client connected from {endpoint}.");
-        listener.BeginAcceptTcpClient(HandleClient, listener);
-        var connection = new TcpConnection(client);
-        connection.OnMessageReceived += async (_, args) =>
+        var tcpClient = tcpListener.EndAcceptTcpClient(result); // receives the new connecting client
+        var clientEndpoint = tcpClient.Client.RemoteEndPoint;
+        Logger.Log($"A client ({clientEndpoint}) connected.");
+        tcpListener.BeginAcceptTcpClient(HandleNewClient, tcpListener); // restarts to accept any new connecting clients
+        var tcpConnection = new TcpConnection(tcpClient);
+        tcpConnection.OnMessageReceived += async (_, args) => // handle receiving messages from the client
         {
-            Logger.Log($"{args.Message.Name}: {args.Message.Text}");
-            foreach (var peer in Peers)
+            Logger.Log($"{args.Message.Username} ({clientEndpoint}): {args.Message.Message}");
+            foreach (var peer in ConnectedPeers) // sends messages from the client to all peers
                 await peer.SendAsync(args.Message);
         };
-        connection.OnConnectionLost += (_, args) =>
+        tcpConnection.OnConnectionLost += async (_, args) => // handle the client when disconnecting
         {
-            connection.Dispose();
-            Peers.Remove(connection);
-            Logger.Log($"A client disconnected from {endpoint}. Reason: {args.Reason}");
+            ConnectedPeers.Remove(tcpConnection); // removes the client from the connected peer list
+            tcpConnection.Dispose(); // disposes the client's connection
+            foreach (var peer in ConnectedPeers) // notifies all connected peers of the disconnecting client
+                await peer.SendAsync(new ChatMessage
+                {
+                    Username = ServerName,
+                    Message = $"A user has disconnected from the server. Reason: {args.Reason}",
+                    Sender = ChatSender.Server
+                });
+            Logger.Log($"A client ({clientEndpoint}) disconnected. Reason: {args.Reason}");
         };
-        Peers.Add(connection);
+        foreach (var peer in ConnectedPeers)
+            await peer.SendAsync(new ChatMessage // notifies all connected peers of the new client
+            {
+                Username = ServerName,
+                Message = "A user has connected to the server.",
+                Sender = ChatSender.Server
+            });
+        ConnectedPeers.Add(tcpConnection); // adds the new client to the connected peer list
     }
 
 }

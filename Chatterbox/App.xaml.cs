@@ -14,9 +14,9 @@ public partial class App
         {
             mainWindow.DisplayMessage(new ChatMessage
             {
-                Name = "Chatterbox",
-                Text = $"An unhandled exception occurred! Reason: {args.Exception.Message}",
-                Sender = ChatSender.Internal
+                Username = "Chatterbox",
+                Message = $"An unhandled exception occurred! Reason: {args.Exception.Message}",
+                Sender = ChatSender.Client
             });
         }
         else

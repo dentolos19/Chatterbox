@@ -42,10 +42,14 @@ public class TcpConnection : IDisposable
     {
         if (_isDisposed)
             return;
-        SendAsync(new ChatMessage
+        try
         {
-            Command = ChatCommand.Disconnect
-        }).GetAwaiter().GetResult();
+            SendAsync(new ChatMessage { Command = ChatCommand.Disconnect }).GetAwaiter().GetResult();
+        }
+        catch
+        {
+            // do nothing
+        }
         _reader.Close();
         _writer.Close();
         if (_receiver.IsBusy)
@@ -61,10 +65,10 @@ public class TcpConnection : IDisposable
     {
         while (_client.Connected)
         {
-            string? received;
+            string? receivedData;
             try
             {
-                received = _reader.ReadLine();
+                receivedData = _reader.ReadLine();
             }
             catch (Exception error)
             {
@@ -77,24 +81,18 @@ public class TcpConnection : IDisposable
                 });
                 break;
             }
-            if (string.IsNullOrEmpty(received))
+            if (string.IsNullOrEmpty(receivedData))
                 continue;
-            var parsed = ChatMessage.Parse(received);
+            var parsed = ChatMessage.Parse(receivedData);
             if (parsed.Command == ChatCommand.Disconnect)
             {
                 if (_isConnectionLost)
                     break;
                 _isConnectionLost = true;
-                OnConnectionLost?.Invoke(this, new ConnectionLostEventArgs
-                {
-                    Reason = "Disconnected by user."
-                });
+                OnConnectionLost?.Invoke(this, new ConnectionLostEventArgs { Reason = "Disconnected by user." });
                 break;
             }
-            OnMessageReceived?.Invoke(this, new MessageReceivedEventArgs
-            {
-                Message = parsed
-            });
+            OnMessageReceived?.Invoke(this, new MessageReceivedEventArgs { Message = parsed });
         }
     }
 
