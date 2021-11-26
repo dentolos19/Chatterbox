@@ -1,11 +1,11 @@
-﻿using System;
+﻿using Chatterbox.Core;
+using CommandLine;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading.Tasks;
-using Chatterbox.Core;
-using CommandLine;
 
 namespace Chatterbox.Server;
 
@@ -18,13 +18,13 @@ public static class Program
     private static int ServerPort { get; set; }
     private static Logger Logger { get; set; }
 
-    private static List<TcpConnection> ConnectedPeers { get; } = new();
+    private static List<TcpConnection> Peers { get; } = new();
 
     private static void Main(string[] args)
     {
-        if (!Directory.Exists(LogsPath)) // creates a new directory for logs; if it doesn't exist
-            Directory.CreateDirectory(LogsPath);
-        Logger = new Logger(Path.Combine(LogsPath, $"{DateTime.Now:yyyyMMdd_HHmmss}.log")); // starts
+        if (!Directory.Exists(LogsPath))
+            Directory.CreateDirectory(LogsPath); // creates a new directory for logs; if it doesn't exist
+        Logger = new Logger(Path.Combine(LogsPath, $"{DateTime.Now:yyyyMMdd_HHmmss}.log"));
         Parser.Default.ParseArguments<ProgramOptions>(args).WithParsed(options => // parses arguments
         {
             if (options.Port is < 1024 or > 49151)
@@ -60,14 +60,14 @@ public static class Program
         tcpConnection.OnMessageReceived += async (_, args) => // handle receiving messages from the client
         {
             Logger.Log($"{args.Message.Username} ({clientEndpoint}): {args.Message.Message}");
-            foreach (var peer in ConnectedPeers) // sends messages from the client to all peers
+            foreach (var peer in Peers) // sends messages from the client to all peers
                 await peer.SendAsync(args.Message);
         };
         tcpConnection.OnConnectionLost += async (_, args) => // handle the client when disconnecting
         {
-            ConnectedPeers.Remove(tcpConnection); // removes the client from the connected peer list
+            Peers.Remove(tcpConnection); // removes the client from the connected peer list
             tcpConnection.Dispose(); // disposes the client's connection
-            foreach (var peer in ConnectedPeers) // notifies all connected peers of the disconnecting client
+            foreach (var peer in Peers) // notifies all connected peers of the disconnecting client
                 await peer.SendAsync(new ChatMessage
                 {
                     Username = ServerName,
@@ -76,14 +76,14 @@ public static class Program
                 });
             Logger.Log($"A client ({clientEndpoint}) disconnected. Reason: {args.Reason}");
         };
-        foreach (var peer in ConnectedPeers)
-            await peer.SendAsync(new ChatMessage // notifies all connected peers of the new client
+        foreach (var peer in Peers) // notifies all connected peers of the new client
+            await peer.SendAsync(new ChatMessage
             {
                 Username = ServerName,
                 Message = "A user has connected to the server.",
                 Sender = ChatSender.Server
             });
-        ConnectedPeers.Add(tcpConnection); // adds the new client to the connected peer list
+        Peers.Add(tcpConnection); // adds the new client to the connected peer list
     }
 
 }

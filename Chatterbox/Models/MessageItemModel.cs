@@ -1,6 +1,6 @@
-﻿using System.Windows;
+﻿using Chatterbox.Core;
+using System.Windows;
 using System.Windows.Media.Imaging;
-using Chatterbox.Core;
 
 namespace Chatterbox.Models;
 

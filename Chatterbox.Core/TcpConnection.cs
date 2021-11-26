@@ -1,9 +1,9 @@
-﻿using System;
+﻿using Chatterbox.Core.Events;
+using System;
 using System.ComponentModel;
 using System.IO;
 using System.Net.Sockets;
 using System.Threading.Tasks;
-using Chatterbox.Core.Events;
 
 namespace Chatterbox.Core;
 
@@ -12,8 +12,8 @@ public class TcpConnection : IDisposable
 
     private readonly TcpClient _client;
     private readonly StreamReader _reader;
-    private readonly BackgroundWorker _receiver;
     private readonly StreamWriter _writer;
+    private readonly BackgroundWorker _receiver;
 
     private bool _isConnectionLost;
     private bool _isDisposed;
@@ -28,7 +28,7 @@ public class TcpConnection : IDisposable
         _writer = new StreamWriter(_client.GetStream()) { AutoFlush = true };
         _receiver = new BackgroundWorker { WorkerSupportsCancellation = true };
         _receiver.DoWork += ReceiveData;
-        _receiver.RunWorkerAsync();
+        _receiver.RunWorkerAsync(); // starts actively receiving for new messages
     }
 
     public async Task SendAsync(ChatMessage message)
@@ -63,28 +63,35 @@ public class TcpConnection : IDisposable
 
     private void ReceiveData(object? sender, DoWorkEventArgs args)
     {
-        while (_client.Connected)
+        while (_client.Connected) // actively receives new messages while connected
         {
             string? receivedData;
             try
             {
                 receivedData = _reader.ReadLine();
             }
-            catch (Exception error)
+            catch (Exception error) // having an exception means that the connection is broken
             {
                 if (_isConnectionLost)
                     break;
                 _isConnectionLost = true;
-                OnConnectionLost?.Invoke(this, new ConnectionLostEventArgs
-                {
-                    Reason = _isDisposed ? "Disconnected by user." : error.Message
-                });
+                OnConnectionLost?.Invoke(this, new ConnectionLostEventArgs { Reason = _isDisposed ? "Disconnected by user." : error.Message });
                 break;
             }
             if (string.IsNullOrEmpty(receivedData))
-                continue;
-            var parsed = ChatMessage.Parse(receivedData);
-            if (parsed.Command == ChatCommand.Disconnect)
+                continue; // continues the loop; if the message received was empty
+            ChatMessage? message = null;
+            try
+            {
+                message = ChatMessage.Parse(receivedData); // tries to parse the received data
+            }
+            catch
+            {
+                // do nothing
+            }
+            if (message is null)
+                continue; // continues the loop; if the message is invalid or not secure
+            if (message.Command == ChatCommand.Disconnect) // handles disconnect command
             {
                 if (_isConnectionLost)
                     break;
@@ -92,7 +99,7 @@ public class TcpConnection : IDisposable
                 OnConnectionLost?.Invoke(this, new ConnectionLostEventArgs { Reason = "Disconnected by user." });
                 break;
             }
-            OnMessageReceived?.Invoke(this, new MessageReceivedEventArgs { Message = parsed });
+            OnMessageReceived?.Invoke(this, new MessageReceivedEventArgs { Message = message });
         }
     }
 

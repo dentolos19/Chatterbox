@@ -1,11 +1,11 @@
-﻿using System;
-using System.ComponentModel;
-using System.Net.Sockets;
-using System.Windows;
-using Chatterbox.Core;
+﻿using Chatterbox.Core;
 using Chatterbox.Core.Events;
 using Chatterbox.Models;
 using Chatterbox.ViewModels;
+using System;
+using System.ComponentModel;
+using System.Net.Sockets;
+using System.Windows;
 
 namespace Chatterbox.Views;
 
@@ -70,37 +70,19 @@ public partial class MainWindow
                 Sender = ChatSender.Client
             });
 
-            // UsernameInput.IsEnabled = false;
-            // IpInput.IsEnabled = false;
-            // PortInput.IsEnabled = false;
-            // ConnectButton.IsDefault = false;
-            // ConnectButton.IsCancel = true;
             ViewModel.EnableConnectionInput = false;
+            ViewModel.EnableMessageSending = true;
             ConnectButton.IsEnabled = true;
             ConnectButton.Content = "Disconnect";
-
-            ViewModel.EnableMessageSending = true;
-            // MessageInput.IsEnabled = true;
-            // SendButton.IsEnabled = true;
-            // SendButton.IsDefault = true;
         }
         else
         {
             _tcpConnection.Dispose();
             _tcpConnection = null;
 
-            // UsernameInput.IsEnabled = true;
-            // IpInput.IsEnabled = true;
-            // PortInput.IsEnabled = true;
-            // ConnectButton.IsDefault = true;
-            // ConnectButton.IsCancel = false;
+            ViewModel.EnableMessageSending = false;
             ViewModel.EnableConnectionInput = true;
             ConnectButton.Content = "Connect";
-
-            ViewModel.EnableMessageSending = false;
-            // MessageInput.IsEnabled = false;
-            // SendButton.IsEnabled = false;
-            // SendButton.IsDefault = false;
         }
     }
 
@@ -109,7 +91,7 @@ public partial class MainWindow
         Dispatcher.Invoke(() =>
         {
             var message = args.Message;
-            if (message.UserId.Equals(_userId))
+            if (message.Id.Equals(_userId))
                 message.Username += " (You)";
             DisplayMessage(message);
         });
@@ -122,7 +104,7 @@ public partial class MainWindow
             return;
         _tcpConnection?.SendAsync(new ChatMessage
         {
-            UserId = _userId,
+            Id = _userId,
             Username = UsernameInput.Text,
             Message = message,
             Sender = ChatSender.User

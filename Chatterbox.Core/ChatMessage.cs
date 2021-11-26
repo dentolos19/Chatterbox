@@ -6,7 +6,7 @@ namespace Chatterbox.Core;
 public class ChatMessage
 {
 
-    public Guid UserId { get; set; }
+    public Guid Id { get; set; }
     public string? Username { get; set; }
     public string? Message { get; set; }
     public ChatCommand Command { get; set; } = ChatCommand.None;
