@@ -1,7 +1,7 @@
 ﻿<Application x:Class="Chatterbox.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             Startup="Initialize" DispatcherUnhandledException="HandleException">
+             StartupUri="Views/MainWindow.xaml" DispatcherUnhandledException="OnUnhandledException">
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>

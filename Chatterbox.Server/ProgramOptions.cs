@@ -1,13 +1,10 @@
 ﻿using CommandLine;
 
-namespace Chatterbox.Server
+namespace Chatterbox.Server;
+
+public class ProgramOptions
 {
 
-    public class ProgramOptions
-    {
-
-        [Option('p', "port")] public int Port { get; } = 8000;
-
-    }
+    [Option('p', "port", Default = 8000)] public int Port { get; init; }
 
 }

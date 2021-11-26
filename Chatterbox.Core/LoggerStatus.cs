@@ -1,6 +1,3 @@
-﻿namespace Chatterbox.Core
-{
+﻿namespace Chatterbox.Core;
 
-    public enum LoggerStatus { Information, Warning, Error }
-
-}
+public enum LoggerStatus { Information, Warning, Error }

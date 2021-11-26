@@ -3,30 +3,27 @@ using System.Windows.Threading;
 using Chatterbox.Core;
 using Chatterbox.Views;
 
-namespace Chatterbox
+namespace Chatterbox;
+
+public partial class App
 {
 
-    public partial class App
+    private void OnUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs args)
     {
-
-        private void Initialize(object sender, StartupEventArgs args)
+        if (Current.MainWindow is MainWindow mainWindow)
         {
-            Current.MainWindow = new MainView();
-            Current.MainWindow.Show();
+            mainWindow.DisplayMessage(new ChatMessage
+            {
+                Name = "Chatterbox",
+                Text = $"An unhandled exception occurred! Reason: {args.Exception.Message}",
+                Sender = ChatSender.Internal
+            });
         }
-
-        private void HandleException(object sender, DispatcherUnhandledExceptionEventArgs args)
+        else
         {
-            if (Current.MainWindow is MainView view)
-                view.DisplayMessage(new ChatMessage
-                {
-                    Username = "Chatterbox",
-                    Content = $"An unhandled exception occurred! Reason: {args.Exception.Message}",
-                    Sender = ChatSender.Internal
-                });
-            args.Handled = true;
+            MessageBox.Show("An unhandled exception occurred! " + args.Exception.Message, "Chatterbox");
         }
-
+        args.Handled = true;
     }
 
 }

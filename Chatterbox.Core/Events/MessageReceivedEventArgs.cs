@@ -1,11 +1,8 @@
-﻿namespace Chatterbox.Core.Events
+﻿namespace Chatterbox.Core.Events;
+
+public class MessageReceivedEventArgs
 {
 
-    public class MessageReceivedEventArgs
-    {
-
-        public ChatMessage Message { get; set; }
-
-    }
+    public ChatMessage Message { get; init; }
 
 }

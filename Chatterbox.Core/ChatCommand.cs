@@ -1,6 +1,3 @@
-﻿namespace Chatterbox.Core
-{
+﻿namespace Chatterbox.Core;
 
-    public enum ChatCommand { None, Disconnect }
-
-}
+public enum ChatCommand { None, Disconnect }
