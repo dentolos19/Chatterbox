@@ -13,8 +13,8 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<Resource Include="Resources\Assets\Host.png"/>
 		<Resource Include="Resources\Assets\Icon.png"/>
+		<Resource Include="Resources\Assets\Server.png"/>
 		<Resource Include="Resources\Assets\User.png"/>
 		<Resource Include="Resources\Assets\Unknown.png"/>
 	</ItemGroup>

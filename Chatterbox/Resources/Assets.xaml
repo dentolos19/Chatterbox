@@ -1,9 +1,9 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
-    <BitmapImage x:Key="ImgIcon" UriSource="Assets/Icon.png"/>
-    <BitmapImage x:Key="ImgUser" UriSource="Assets/User.png"/>
-    <BitmapImage x:Key="ImgHost" UriSource="Assets/Host.png"/>
-    <BitmapImage x:Key="ImgUnknown" UriSource="Assets/Unknown.png"/>
+    <BitmapImage x:Key="IconImage" UriSource="Assets/Icon.png"/>
+    <BitmapImage x:Key="UserImage" UriSource="Assets/User.png"/>
+    <BitmapImage x:Key="ServerImage" UriSource="Assets/Server.png"/>
+    <BitmapImage x:Key="UnknownImage" UriSource="Assets/Unknown.png"/>
 
 </ResourceDictionary>

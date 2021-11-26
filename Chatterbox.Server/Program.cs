@@ -43,7 +43,7 @@ public static class Program
     {
         var tcpListener = new TcpListener(IPAddress.Any, ServerPort);
         tcpListener.Start(); // starts listening for new connecting clients
-        Logger.Log($"Started hosting at port {ServerPort}.");
+        Logger.Log($"Started listening at port {ServerPort}.");
         tcpListener.BeginAcceptTcpClient(HandleNewClient, tcpListener); // accepts any new connecting clients
         await Task.Delay(-1);
     }
