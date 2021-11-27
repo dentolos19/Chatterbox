@@ -77,7 +77,7 @@ public partial class MainWindow
         }
         else
         {
-            _tcpConnection.Dispose();
+            _tcpConnection.Disconnect();
             _tcpConnection = null;
 
             ViewModel.EnableMessageSending = false;
@@ -132,7 +132,7 @@ public partial class MainWindow
         if (_tcpConnection is null)
             return;
         if (MessageBox.Show("Are you sure that you want to exit while connection is still active?", "Chatterbox", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
-            _tcpConnection?.Dispose();
+            _tcpConnection?.Disconnect();
         else
             args.Cancel = true;
     }

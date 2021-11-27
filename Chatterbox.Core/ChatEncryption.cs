@@ -15,16 +15,16 @@ public static class ChatEncryption
             throw new ArgumentOutOfRangeException(nameof(key));
         if (key.Length == 16)
             return key;
-        var charsNeeded = 16 - key.Length;
-        for (var index = 0; index < charsNeeded; index++)
-            key += "X";
+        var charactersLeft = 16 - key.Length;
+        for (var index = 0; index < charactersLeft; index++)
+            key += " ";
         return key;
     }
 
     public static string EncryptData(string data, string key)
     {
         key = FixKeyLength(key);
-        var array = Encoding.UTF8.GetBytes(data);
+        var bytes = Encoding.UTF8.GetBytes(data);
         var provider = new AesCryptoServiceProvider
         {
             Key = Encoding.UTF8.GetBytes(key),
@@ -32,7 +32,7 @@ public static class ChatEncryption
             Padding = PaddingMode.PKCS7
         };
         var encryptor = provider.CreateEncryptor();
-        var result = encryptor.TransformFinalBlock(array, 0, array.Length);
+        var result = encryptor.TransformFinalBlock(bytes, 0, bytes.Length);
         provider.Clear();
         return Convert.ToBase64String(result, 0, result.Length);
     }
@@ -42,7 +42,7 @@ public static class ChatEncryption
         key = FixKeyLength(key);
         try
         {
-            var array = Convert.FromBase64String(data);
+            var bytes = Convert.FromBase64String(data);
             var provider = new AesCryptoServiceProvider
             {
                 Key = Encoding.UTF8.GetBytes(key),
@@ -50,7 +50,7 @@ public static class ChatEncryption
                 Padding = PaddingMode.PKCS7
             };
             var decryptor = provider.CreateDecryptor();
-            var resultArray = decryptor.TransformFinalBlock(array, 0, array.Length);
+            var resultArray = decryptor.TransformFinalBlock(bytes, 0, bytes.Length);
             provider.Clear();
             output = Encoding.UTF8.GetString(resultArray);
             return true;

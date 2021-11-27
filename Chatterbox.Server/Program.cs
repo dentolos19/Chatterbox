@@ -12,8 +12,6 @@ namespace Chatterbox.Server;
 public static class Program
 {
 
-    private static readonly string LogsPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "logs");
-
     private static string ServerName { get; set; }
     private static int ServerPort { get; set; }
     private static Logger Logger { get; set; }
@@ -22,12 +20,10 @@ public static class Program
 
     private static void Main(string[] args)
     {
-        if (!Directory.Exists(LogsPath))
-            Directory.CreateDirectory(LogsPath); // creates a new directory for logs; if it doesn't exist
-        Logger = new Logger(Path.Combine(LogsPath, $"{DateTime.Now:yyyyMMdd_HHmmss}.log"));
+        Logger = new Logger(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "logs", $"{DateTime.Now:yyyyMMdd_HHmmss}.log"));
         Parser.Default.ParseArguments<ProgramOptions>(args).WithParsed(options => // parses arguments
         {
-            if (options.Port is < 1024 or > 49151)
+            if (options.Port is < 1024 or > 49151) // checks port argument
             {
                 Logger.Log("Port cannot be lower than 1024 or greater than 49151.");
                 return;
@@ -35,7 +31,17 @@ public static class Program
             ServerName = options.Name;
             ServerPort = options.Port;
         });
-        AppDomain.CurrentDomain.ProcessExit += delegate { Logger.Dispose(); };
+        AppDomain.CurrentDomain.UnhandledException += (_, args2) =>
+        {
+            var status = args2.IsTerminating ? LoggerStatus.Error : LoggerStatus.Warning;
+            Logger.Log("An unhandled exception had occurred! " + ((Exception)args2.ExceptionObject).Message, status);
+        };
+        AppDomain.CurrentDomain.ProcessExit += delegate
+        {
+            foreach (var peer in Peers)
+                peer.Disconnect(true);
+            Logger.Dispose();
+        };
         MainAsync().GetAwaiter().GetResult();
     }
 
@@ -66,7 +72,7 @@ public static class Program
         tcpConnection.OnConnectionLost += async (_, args) => // handle the client when disconnecting
         {
             Peers.Remove(tcpConnection); // removes the client from the connected peer list
-            tcpConnection.Dispose(); // disposes the client's connection
+            tcpConnection.Disconnect(); // disposes the client's connection
             foreach (var peer in Peers) // notifies all connected peers of the disconnecting client
                 await peer.SendAsync(new ChatMessage
                 {

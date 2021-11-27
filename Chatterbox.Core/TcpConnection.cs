@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Chatterbox.Core;
 
-public class TcpConnection : IDisposable
+public class TcpConnection
 {
 
     private readonly TcpClient _client;
@@ -16,7 +16,7 @@ public class TcpConnection : IDisposable
     private readonly BackgroundWorker _receiver;
 
     private bool _isConnectionLost;
-    private bool _isDisposed;
+    private bool _isDisconnected;
 
     public event EventHandler<MessageReceivedEventArgs>? OnMessageReceived;
     public event EventHandler<ConnectionLostEventArgs>? OnConnectionLost;
@@ -33,18 +33,21 @@ public class TcpConnection : IDisposable
 
     public async Task SendAsync(ChatMessage message)
     {
-        if (_isDisposed)
+        if (_isDisconnected)
             return;
         await _writer.WriteLineAsync(message.ToString());
     }
 
-    public void Dispose()
+    public void Disconnect(bool isServer = false)
     {
-        if (_isDisposed)
+        if (_isDisconnected)
             return;
         try
         {
-            SendAsync(new ChatMessage { Command = ChatCommand.Disconnect }).GetAwaiter().GetResult();
+            var message = isServer
+                ? new ChatMessage { Command = ChatCommand.ServerClosing }
+                : new ChatMessage { Command = ChatCommand.UserDisconnecting };
+            SendAsync(message).GetAwaiter().GetResult();
         }
         catch
         {
@@ -58,7 +61,7 @@ public class TcpConnection : IDisposable
         if (_client.Connected)
             _client.GetStream().Close();
         _client.Close();
-        _isDisposed = true;
+        _isDisconnected = true;
     }
 
     private void ReceiveData(object? sender, DoWorkEventArgs args)
@@ -75,7 +78,7 @@ public class TcpConnection : IDisposable
                 if (_isConnectionLost)
                     break;
                 _isConnectionLost = true;
-                OnConnectionLost?.Invoke(this, new ConnectionLostEventArgs { Reason = _isDisposed ? "Disconnected by user." : error.Message });
+                OnConnectionLost?.Invoke(this, new ConnectionLostEventArgs { Reason = _isDisconnected ? "Disconnected by user." : error.Message });
                 break;
             }
             if (string.IsNullOrEmpty(receivedData))
@@ -91,12 +94,18 @@ public class TcpConnection : IDisposable
             }
             if (message is null)
                 continue; // continues the loop; if the message is invalid or not secure
-            if (message.Command == ChatCommand.Disconnect) // handles disconnect command
+            if (_isConnectionLost)
+                break;
+            if (message.Command == ChatCommand.UserDisconnecting) // handles user disconnecting command
             {
-                if (_isConnectionLost)
-                    break;
                 _isConnectionLost = true;
                 OnConnectionLost?.Invoke(this, new ConnectionLostEventArgs { Reason = "Disconnected by user." });
+                break;
+            }
+            if (message.Command == ChatCommand.ServerClosing) // handles server closing command
+            {
+                _isConnectionLost = true;
+                OnConnectionLost?.Invoke(this, new ConnectionLostEventArgs { Reason = "Server closed." });
                 break;
             }
             OnMessageReceived?.Invoke(this, new MessageReceivedEventArgs { Message = message });

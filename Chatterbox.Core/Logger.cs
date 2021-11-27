@@ -11,8 +11,12 @@ public class Logger : IDisposable
 
     public Logger(string? outputPath = null)
     {
-        if (!string.IsNullOrEmpty(outputPath))
-            _writer = new StreamWriter(outputPath) { AutoFlush = true };
+        if (string.IsNullOrEmpty(outputPath))
+            return;
+        var outputDirectoryPath = Path.GetDirectoryName(outputPath);
+        if (!Directory.Exists(outputDirectoryPath))
+            Directory.CreateDirectory(outputDirectoryPath);
+        _writer = new StreamWriter(outputPath) { AutoFlush = true };
     }
 
     public void Log(string message, LoggerStatus status = LoggerStatus.Info)
