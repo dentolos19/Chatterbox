@@ -31,10 +31,10 @@ public static class Program
             ServerName = options.Name;
             ServerPort = options.Port;
         });
-        AppDomain.CurrentDomain.UnhandledException += (_, args2) =>
+        AppDomain.CurrentDomain.UnhandledException += (_, eventArgs) =>
         {
-            var status = args2.IsTerminating ? LoggerStatus.Error : LoggerStatus.Warning;
-            Logger.Log("An unhandled exception had occurred! " + ((Exception)args2.ExceptionObject).Message, status);
+            var status = eventArgs.IsTerminating ? LoggerStatus.Error : LoggerStatus.Warning;
+            Logger.Log("An unhandled exception had occurred! " + ((Exception)eventArgs.ExceptionObject).Message, status);
         };
         AppDomain.CurrentDomain.ProcessExit += delegate
         {

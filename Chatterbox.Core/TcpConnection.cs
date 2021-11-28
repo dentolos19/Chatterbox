@@ -33,9 +33,8 @@ public class TcpConnection
 
     public async Task SendAsync(ChatMessage message)
     {
-        if (_isDisconnected)
-            return;
-        await _writer.WriteLineAsync(message.ToString());
+        if (!_isDisconnected)
+            await _writer.WriteLineAsync(message.ToString());
     }
 
     public void Disconnect(bool isServer = false)

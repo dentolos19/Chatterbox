@@ -4,7 +4,7 @@ using System.Windows.Media.Imaging;
 
 namespace Chatterbox.Models;
 
-public record MessageItemModel
+public class MessageItemModel
 {
 
     public BitmapImage Image { get; }
