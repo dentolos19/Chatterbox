@@ -10,9 +10,12 @@ jobs:
         with:
           dotnet-version: 6.0.x
       - name: Publish
-        run: dotnet publish $PROJECT_PATH --configuration Release --output build
+        run: |
+          C:\msys64\usr\bin\bash -lc "pacman -S --noconfirm rsync; which rsync"
+          echo "##[add-path]C:\msys64\usr\bin"
+          dotnet publish Chatterbox.sln --configuration Release --output build
         env:
-          PROJECT_PATH: Chatterbox.sln # change this to match your solution
+          ACTIONS_ALLOW_UNSECURE_COMMANDS: true
       - name: Deploy
         uses: JamesIves/github-pages-deploy-action@4.2.0
         with:
