@@ -1,23 +1,21 @@
-name: Publish & Deploy
 on: workflow_dispatch
 jobs:
   build:
     runs-on: windows-latest
     steps:
-      - name: Checkout Repository
+      - name: Checkout
         uses: actions/checkout@v2
       - name: Setup .NET
         uses: actions/setup-dotnet@v1
         with:
           dotnet-version: 6.0.x
-      - name: Publish Project
+      - name: Publish
         run: dotnet publish $PROJECT_PATH --configuration Release --output build
         env:
-          PROJECT_PATH: Chatterbox.sln
-      - name: Deploy Project
-        uses: s0/git-publish-subdir-action@develop
-        env:
-          REPO: self
-          BRANCH: build
-          FOLDER: build
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PROJECT_PATH: Chatterbox.sln # change this to match your solution
+      - name: Deploy
+        uses: JamesIves/github-pages-deploy-action@4.2.0
+        with:
+          branch: build
+          folder: build
+          single-commit: true
