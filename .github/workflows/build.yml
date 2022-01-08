@@ -1,0 +1,21 @@
+name: Publish & Deploy
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 6.0.x
+      - name: Publish Project
+        run: dotnet publish $PROJECT_PATH --configuration Release --output build
+        env:
+          PROJECT_PATH: Chatterbox.sln
+      - name: Deploy Project
+        uses: s0/git-publish-subdir-action@develop
+        env:
+          REPO: self
+          BRANCH: build
+          FOLDER: build
