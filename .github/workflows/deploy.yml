@@ -2,7 +2,9 @@ name: Commitly Deployment Workflow
 on:
   push:
     paths:
-      - Libjector/**
+      - Chatterbox/**
+      - Chatterbox.Core/**
+      - Chatterbox.Server/**
   workflow_dispatch:
 env:
   RELEASE_TAG: Commitly
