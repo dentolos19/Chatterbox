@@ -36,8 +36,9 @@ jobs:
         run: |
           dotnet publish ${{ env.PROJECT_FILE }} -c Release -p:RuntimeIdentifier=win-${{ matrix.platform }} -p:PublishSingleFile=true -p:SelfContained=false -o build
           $artifacts = (Get-ChildItem build/*).FullName
+          echo $artifacts
           New-Item -ItemType Directory artifacts
-          Compress-Archive $artifacts artifacts/${{ github.event.repository.name }}_${{ matrix.platform }}.zip
+          Compress-Archive -Path $artifacts -DestinationPath artifacts/${{ github.event.repository.name }}_${{ matrix.platform }}.zip
       - name: Upload Artifacts
         uses: actions/upload-artifact@v3
         with:
