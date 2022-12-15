@@ -1,5 +1,5 @@
 name: Canary Deployment
-run-name: "Canary Deployment #${{ github.run_number }}"
+run-name: "${{ github.workflow }} #${{ github.run_number }}"
 concurrency:
   group: ${{ github.workflow }}
   cancel-in-progress: true
