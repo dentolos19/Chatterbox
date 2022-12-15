@@ -1,0 +1,9 @@
+on:
+  workflow_dispatch:
+jobs:
+  main:
+    uses: dentolos19/ActionsPlayground/.github/workflows/dotnet-reusable.yml@main
+    with:
+      TARGET_BRANCH: ${{ github.event.repository.default_branch }}
+      PROJECT_FILE: Chatterbox.sln
+      RELEASE_TAG: CanaryTest
