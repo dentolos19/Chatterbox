@@ -6,4 +6,4 @@ This project was started for me to learn more about [Transmission Control Protoc
 
 ## 📸 Screenshots
 
-![](.github/images/0.png)
+![](.github/assets/0.png)
