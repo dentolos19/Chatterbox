@@ -1,4 +1,4 @@
-# <img src=".github/icon.png" width="48px"/> Chatterbox
+# <img src="docs/icon.png" width="48px"/> Chatterbox
 
 A simple TCP/IP-based chat communication app!
 
@@ -6,4 +6,4 @@ This project was started for me to learn more about [Transmission Control Protoc
 
 ## 📸 Screenshots
 
-![](.github/assets/0.png)
+![](docs/0.png)

@@ -1,19 +1,19 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.30804.86
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.33414.496
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Chatterbox.Server", "Chatterbox.Server\Chatterbox.Server.csproj", "{5AB61F51-32B0-4B4A-A632-BD51EC0F570E}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Chatterbox.Core", "Chatterbox.Core\Chatterbox.Core.csproj", "{2919F24A-ACE5-4DF2-A1D1-76C9893AE1A3}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Chatterbox", "Chatterbox\Chatterbox.csproj", "{E60298D7-EAE4-4151-B92A-AFA1CFB4B20D}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Repository Files", "Repository Files", "{330BCCCA-BB46-4195-89E8-350EC60ACABC}"
 	ProjectSection(SolutionItems) = preProject
 		LICENSE = LICENSE
 		README.md = README.md
 	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Chatterbox.Core", "src\Chatterbox.Core\Chatterbox.Core.csproj", "{B0B53CE6-A712-4826-9F66-1A62503FACA7}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Chatterbox", "src\Chatterbox\Chatterbox.csproj", "{166DC3D3-F268-4C93-8CD8-85865A8B171F}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Chatterbox.Server", "src\Chatterbox.Server\Chatterbox.Server.csproj", "{5F311258-7AB2-4C16-8F47-50C6513B1D2D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,18 +21,18 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{5AB61F51-32B0-4B4A-A632-BD51EC0F570E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5AB61F51-32B0-4B4A-A632-BD51EC0F570E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5AB61F51-32B0-4B4A-A632-BD51EC0F570E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5AB61F51-32B0-4B4A-A632-BD51EC0F570E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{2919F24A-ACE5-4DF2-A1D1-76C9893AE1A3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2919F24A-ACE5-4DF2-A1D1-76C9893AE1A3}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2919F24A-ACE5-4DF2-A1D1-76C9893AE1A3}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2919F24A-ACE5-4DF2-A1D1-76C9893AE1A3}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E60298D7-EAE4-4151-B92A-AFA1CFB4B20D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E60298D7-EAE4-4151-B92A-AFA1CFB4B20D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E60298D7-EAE4-4151-B92A-AFA1CFB4B20D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E60298D7-EAE4-4151-B92A-AFA1CFB4B20D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B0B53CE6-A712-4826-9F66-1A62503FACA7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B0B53CE6-A712-4826-9F66-1A62503FACA7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B0B53CE6-A712-4826-9F66-1A62503FACA7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B0B53CE6-A712-4826-9F66-1A62503FACA7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{166DC3D3-F268-4C93-8CD8-85865A8B171F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{166DC3D3-F268-4C93-8CD8-85865A8B171F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{166DC3D3-F268-4C93-8CD8-85865A8B171F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{166DC3D3-F268-4C93-8CD8-85865A8B171F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5F311258-7AB2-4C16-8F47-50C6513B1D2D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5F311258-7AB2-4C16-8F47-50C6513B1D2D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5F311258-7AB2-4C16-8F47-50C6513B1D2D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5F311258-7AB2-4C16-8F47-50C6513B1D2D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
