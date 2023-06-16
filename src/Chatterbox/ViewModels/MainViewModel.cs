@@ -2,7 +2,6 @@
 
 public class MainViewModel : BaseViewModel
 {
-
     private bool _enableConnectionInput = true;
     private bool _enableMessageSending;
 
@@ -17,5 +16,4 @@ public class MainViewModel : BaseViewModel
         get => _enableMessageSending;
         set => UpdateProperty(ref _enableMessageSending, value);
     }
-
 }

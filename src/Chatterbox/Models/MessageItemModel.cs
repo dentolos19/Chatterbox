@@ -1,12 +1,11 @@
-﻿using Chatterbox.Core;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Media.Imaging;
+using Chatterbox.Core;
 
 namespace Chatterbox.Models;
 
 public class MessageItemModel
 {
-
     public BitmapImage Image { get; }
     public string Name { get; }
     public string Message { get; }
@@ -23,5 +22,4 @@ public class MessageItemModel
         Name = message.Username + $" @ {message.Time:t}";
         Message = message.Message;
     }
-
 }

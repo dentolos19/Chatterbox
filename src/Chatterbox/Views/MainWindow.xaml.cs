@@ -1,17 +1,15 @@
-﻿using Chatterbox.Core;
+﻿using System.ComponentModel;
+using System.Net.Sockets;
+using System.Windows;
+using Chatterbox.Core;
 using Chatterbox.Core.Events;
 using Chatterbox.Models;
 using Chatterbox.ViewModels;
-using System;
-using System.ComponentModel;
-using System.Net.Sockets;
-using System.Windows;
 
 namespace Chatterbox.Views;
 
 public partial class MainWindow
 {
-
     private Guid _userId;
     private TcpConnection? _tcpConnection;
 
@@ -136,5 +134,4 @@ public partial class MainWindow
         else
             args.Cancel = true;
     }
-
 }

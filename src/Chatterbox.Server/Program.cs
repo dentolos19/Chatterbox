@@ -1,17 +1,12 @@
-﻿using Chatterbox.Core;
-using CommandLine;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Net;
+﻿using System.Net;
 using System.Net.Sockets;
-using System.Threading.Tasks;
+using Chatterbox.Core;
+using CommandLine;
 
 namespace Chatterbox.Server;
 
 public static class Program
 {
-
     private static string ServerName { get; set; }
     private static int ServerPort { get; set; }
     private static Logger Logger { get; set; }
@@ -91,5 +86,4 @@ public static class Program
             });
         Peers.Add(tcpConnection); // adds the new client to the connected peer list
     }
-
 }

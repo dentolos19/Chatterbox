@@ -2,7 +2,5 @@
 
 public class MessageReceivedEventArgs
 {
-
     public ChatMessage Message { get; init; }
-
 }

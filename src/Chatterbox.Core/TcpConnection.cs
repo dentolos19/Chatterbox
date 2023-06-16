@@ -1,15 +1,11 @@
-﻿using Chatterbox.Core.Events;
-using System;
-using System.ComponentModel;
-using System.IO;
+﻿using System.ComponentModel;
 using System.Net.Sockets;
-using System.Threading.Tasks;
+using Chatterbox.Core.Events;
 
 namespace Chatterbox.Core;
 
 public class TcpConnection
 {
-
     private readonly TcpClient _client;
     private readonly StreamReader _reader;
     private readonly StreamWriter _writer;
@@ -110,5 +106,4 @@ public class TcpConnection
             OnMessageReceived?.Invoke(this, new MessageReceivedEventArgs { Message = message });
         }
     }
-
 }

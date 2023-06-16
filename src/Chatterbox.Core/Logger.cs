@@ -1,12 +1,9 @@
-﻿using System;
-using System.Diagnostics;
-using System.IO;
+﻿using System.Diagnostics;
 
 namespace Chatterbox.Core;
 
 public class Logger : IDisposable
 {
-
     private readonly StreamWriter? _writer;
 
     public Logger(string? outputPath = null)
@@ -31,5 +28,4 @@ public class Logger : IDisposable
     {
         _writer?.Close();
     }
-
 }

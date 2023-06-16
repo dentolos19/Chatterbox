@@ -5,7 +5,6 @@ namespace Chatterbox.ViewModels;
 
 public class BaseViewModel : INotifyPropertyChanged
 {
-
     public event PropertyChangedEventHandler? PropertyChanged;
 
     protected void UpdateProperty<T>(ref T storage, T value, [CallerMemberName] string? propertyName = null)
@@ -20,5 +19,4 @@ public class BaseViewModel : INotifyPropertyChanged
     {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
-
 }

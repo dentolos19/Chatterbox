@@ -1,11 +1,9 @@
-﻿using System;
-using System.Text.Json;
+﻿using System.Text.Json;
 
 namespace Chatterbox.Core;
 
 public class ChatMessage
 {
-
     public Guid Id { get; set; }
     public string Username { get; set; }
     public string Message { get; set; }
@@ -25,5 +23,4 @@ public class ChatMessage
         var json = JsonSerializer.Serialize(this);
         return ChatEncryption.EncryptData(json, ChatEncryption.Key);
     }
-
 }

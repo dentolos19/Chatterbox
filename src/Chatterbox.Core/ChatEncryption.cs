@@ -1,12 +1,10 @@
-﻿using System;
-using System.Security.Cryptography;
+﻿using System.Security.Cryptography;
 using System.Text;
 
 namespace Chatterbox.Core;
 
 public static class ChatEncryption
 {
-
     internal const string Key = "Chatterbox";
 
     private static string FixKeyLength(string key)
@@ -61,5 +59,4 @@ public static class ChatEncryption
             return false;
         }
     }
-
 }
