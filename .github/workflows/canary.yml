@@ -1,5 +1,5 @@
 name: Deploy Canary Build
-run-name: ${{ github.workflow }} #${{ github.run_number }}
+run-name: "${{ github.workflow }} #${{ github.run_number }}"
 on:
   push:
     branches: main
@@ -16,20 +16,17 @@ env:
 jobs:
   build:
     runs-on: windows-latest
-    strategy:
-      matrix:
-        platform: [win-x64, linux-x64]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-dotnet@v4
       - run: |
-          dotnet publish ${{ env.PROJECT_FILE }} --self-contained --runtime ${{ matrix.platform }} --output build
+          dotnet publish ${{ env.PROJECT_FILE }} --output build
           $artifacts = (Get-ChildItem -Path build -Recurse).FullName
           New-Item -Path artifacts -ItemType Directory
-          Compress-Archive -Path $artifacts -DestinationPath artifacts/${{ github.event.repository.name }}_${{ matrix.platform }}.zip
+          Compress-Archive -Path $artifacts -DestinationPath artifacts/${{ github.event.repository.name }}.zip
       - uses: actions/upload-artifact@v4
         with:
-          name: ${{ matrix.platform }}
+          name: output
           path: artifacts/*
   deploy:
     runs-on: ubuntu-latest
