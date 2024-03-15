@@ -1,10 +1,12 @@
 <h1>
-    <img src="docs/icon.png" style="height: 1em;"/>
+    <img src="docs/icon.png" alt="Icon" height="30"/>
     <span>Chatterbox</span>
 </h1>
 
 A simple TCP/IP-based chat communication app!
 
-## 📸 Screenshots
+![Demo](docs/demo.png)
 
-![](docs/0.png)
+# 📜 License
+
+Distributed under the MIT License. See [LICENSE](./LICENSE) for more information.
