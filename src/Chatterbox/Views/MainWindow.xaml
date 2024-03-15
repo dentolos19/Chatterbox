@@ -57,7 +57,10 @@
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
             <TextBox x:Name="MessageInput" Grid.Column="0" IsEnabled="{Binding Path=EnableMessageSending}" />
-            <Button Grid.Column="2" IsEnabled="{Binding Path=EnableMessageSending}" IsDefault="True" Click="OnSendMessage">Send</Button>
+            <Button Grid.Column="2" IsEnabled="{Binding Path=EnableMessageSending}" IsDefault="True"
+                    Click="OnSendMessage">
+                Send
+            </Button>
         </Grid>
     </Grid>
 </Window>

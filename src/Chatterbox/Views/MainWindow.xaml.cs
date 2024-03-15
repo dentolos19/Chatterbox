@@ -39,7 +39,11 @@ public partial class MainWindow
             var tcpClient = new TcpClient();
             try
             {
-                await tcpClient.ConnectAsync(IpInput.Text, int.Parse(PortInput.Text)); // attempts to connect to the server
+                // Attempts to connect to the server
+                await tcpClient.ConnectAsync(
+                    IpInput.Text,
+                    int.Parse(PortInput.Text)
+                );
             }
             catch (Exception error)
             {
@@ -47,21 +51,26 @@ public partial class MainWindow
                 ConnectButton.IsEnabled = true;
                 ConnectButton.Content = "Connect";
 
-                DisplayMessage(new ChatMessage // notifies the user that the connection was unsuccessful
+                // Notifies the user that the connection was unsuccessful
+                DisplayMessage(new ChatMessage
                 {
                     Username = "Chatterbox",
                     Message = $"Unable to connect to the server. Reason: {error.Message}",
                     Sender = ChatSender.Client
                 });
+
                 return;
             }
 
-            _userId = Guid.NewGuid(); // creates a unique id for the user
-            _tcpConnection = new TcpConnection(tcpClient); // setups connection between the client and the server; after successful connection
+            // Creates a unique ID for the user
+            _userId = Guid.NewGuid();
+            // Setups connection between the client and the server; after successful connection
+            _tcpConnection = new TcpConnection(tcpClient);
             _tcpConnection.OnMessageReceived += OnReceiveMessage;
             _tcpConnection.OnConnectionLost += OnConnectionLost;
 
-            DisplayMessage(new ChatMessage // notifies the user that the connection was successful
+            // Notifies the user that the connection was successful
+            DisplayMessage(new ChatMessage
             {
                 Username = "Chatterbox",
                 Message = $"Connected to {tcpClient.Client.RemoteEndPoint}.",
@@ -129,7 +138,14 @@ public partial class MainWindow
     {
         if (_tcpConnection is null)
             return;
-        if (MessageBox.Show("Are you sure that you want to exit while connection is still active?", "Chatterbox", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+        if (
+            MessageBox.Show(
+                "Are you sure that you want to exit while connection is still active?",
+                "Chatterbox",
+                MessageBoxButton.YesNo
+            ) ==
+            MessageBoxResult.Yes
+        )
             _tcpConnection?.Disconnect();
         else
             args.Cancel = true;

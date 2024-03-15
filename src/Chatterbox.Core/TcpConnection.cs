@@ -24,7 +24,7 @@ public class TcpConnection
         _writer = new StreamWriter(_client.GetStream()) { AutoFlush = true };
         _receiver = new BackgroundWorker { WorkerSupportsCancellation = true };
         _receiver.DoWork += ReceiveData;
-        _receiver.RunWorkerAsync(); // starts actively receiving for new messages
+        _receiver.RunWorkerAsync(); // Starts actively receiving for new messages
     }
 
     public async Task SendAsync(ChatMessage message)
@@ -46,7 +46,7 @@ public class TcpConnection
         }
         catch
         {
-            // do nothing
+            // Do nothing
         }
         _reader.Close();
         _writer.Close();
@@ -61,48 +61,63 @@ public class TcpConnection
 
     private void ReceiveData(object? sender, DoWorkEventArgs args)
     {
-        while (_client.Connected) // actively receives new messages while connected
+        while (_client.Connected)
         {
+            // Actively receives new messages while connected
             string? receivedData;
             try
             {
                 receivedData = _reader.ReadLine();
             }
-            catch (Exception error) // having an exception means that the connection is broken
+            catch (Exception error)
             {
                 if (_isConnectionLost)
+                    // Having an exception means that the connection is broken
                     break;
                 _isConnectionLost = true;
-                OnConnectionLost?.Invoke(this, new ConnectionLostEventArgs { Reason = _isDisconnected ? "Disconnected by user." : error.Message });
+                OnConnectionLost?.Invoke(this,
+                    new ConnectionLostEventArgs { Reason = _isDisconnected ? "Disconnected by user." : error.Message });
                 break;
             }
+
             if (string.IsNullOrEmpty(receivedData))
-                continue; // continues the loop; if the message received was empty
+                // Continues the loop; if the message received was empty
+                continue;
+
+            // Try to parse the received data
             ChatMessage? message = null;
             try
             {
-                message = ChatMessage.Parse(receivedData); // tries to parse the received data
+                message = ChatMessage.Parse(receivedData);
             }
             catch
             {
-                // do nothing
+                // Do nothing
             }
+
             if (message is null)
-                continue; // continues the loop; if the message is invalid or not secure
+                // Continues the loop; if the message is invalid or not secure
+                continue;
             if (_isConnectionLost)
+                // Breaks the loop; if the connection is lost
                 break;
-            if (message.Command == ChatCommand.UserDisconnecting) // handles user disconnecting command
+
+            // Handles user disconnecting command
+            if (message.Command == ChatCommand.UserDisconnecting)
             {
                 _isConnectionLost = true;
                 OnConnectionLost?.Invoke(this, new ConnectionLostEventArgs { Reason = "Disconnected by user." });
                 break;
             }
-            if (message.Command == ChatCommand.ServerClosing) // handles server closing command
+
+            // Handles server closing command
+            if (message.Command == ChatCommand.ServerClosing)
             {
                 _isConnectionLost = true;
                 OnConnectionLost?.Invoke(this, new ConnectionLostEventArgs { Reason = "Server closed." });
                 break;
             }
+
             OnMessageReceived?.Invoke(this, new MessageReceivedEventArgs { Message = message });
         }
     }
